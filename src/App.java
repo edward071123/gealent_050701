@@ -35,6 +35,7 @@ public class App {
         String y2 = "丙方";
 
         System.out.println(y1 + y2);
+
     }
 
 }
