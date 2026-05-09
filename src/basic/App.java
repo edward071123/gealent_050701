@@ -1,3 +1,9 @@
+package basic;
+// package: 隸屬於src下面的資料夾
+// 類比的概念就是: 想像src下是一間公司, 其他下面的資料夾是其部門
+// 部門下面的檔案就是要隸屬於xx部門
+
+
 // 類別名稱要跟擋案名稱相同
 // 類別名稱要大寫開頭
 // {} : 左右大括號
@@ -19,13 +25,13 @@ public class App {
         // = : 右邊數值丟到左邊容器
 
         // 不用變數
-        System.out.println(5 + 3);
-        System.out.println(5 * 3);
-        System.out.println(5 / 3);
-        System.out.println(5 - 3);
+        System.out.println(7 + 4);
+        System.out.println(7 * 4);
+        System.out.println(7 / 4);
+        System.out.println(7 - 4);
         // 使用變數
-        int x = 2;
-        int z = 3;
+        int x = 7;
+        int z = 4;
         System.out.println(x + z);
         System.out.println(x * z);
         System.out.println(x / z);
@@ -35,7 +41,6 @@ public class App {
         String y2 = "丙方";
 
         System.out.println(y1 + y2);
-
     }
 
 }
