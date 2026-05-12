@@ -68,9 +68,9 @@ public class BasicDeclare {
 
         // 建立一個boolean的array 裡面要有三個boolean值
         boolean[] xx4 = { true, false, true };
-        System.out.println("陣列(boolean)-xx4: " + xx3[0]);
-        System.out.println("陣列(boolean)-xx4: " + xx3[1]);
-        System.out.println("陣列(boolean)-xx4: " + xx3[2]);
+        System.out.println("陣列(boolean)-xx4: " + xx4[0]);
+        System.out.println("陣列(boolean)-xx4: " + xx4[1]);
+        System.out.println("陣列(boolean)-xx4: " + xx4[2]);
 
     }
 }
