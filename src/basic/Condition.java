@@ -4,17 +4,17 @@ public class Condition {
     public static void main(String[] args) {
         // 條件式
         // if(條件成立) {
-        //     條件成立時候跑進來這裡面
+        //      條件成立時候跑進來這裡面
         // } else {
-        //     條件不成立時候跑進來這裡面
+        //      條件不成立時候跑進來這裡面
         // }
 
 
         int a11 = 15;
         int b11 = 15;
 
-        if(a11 < b11) {
-            System.out.println("a11 小於 b11");
+        if((a11 < b11)) {
+            System.out.println("a11 小於 b11"); 
         } else {
             System.out.println("a11 非小於 b11");
         }
@@ -48,7 +48,7 @@ public class Condition {
         //     // 上面條件都不符合 才跑來這裡
         // }
 
-        int a = 3;
+        int a = 6;
 
         if(a == 0) {
             System.out.println("a 是 0 ");
@@ -66,16 +66,40 @@ public class Condition {
         // 如果分數超過80 低於90分 印出: 很好
         // 如果分數超過60 低於80分 印出: 好
         // 如果分數未滿 60分 印出: 請加油
+
         int score = 60;
         if(score >= 90) {
             System.out.println("超棒");
-        } else if(score >= 80 && score < 90) {
+        } else if((score >= 80) && (score < 90)) {
             System.out.println("很好");
-        } else if(score >= 60 && score < 80) {
+        } else if(score >= 60 && score < 80 ) {
             System.out.println("好");
         } else {
             System.out.println("請加油");
         }
 
+       
+        // 驗證: score 0 ~ 100;
+        // 迴圈 (loop) 
+        // for loop
+        //  起始值           可以進來的條件  每次先加1
+        for(int index = 0;  index <= 100;  index++) {
+            // System.out.println(index);
+            int score1 = index;
+
+            if(score1 >= 90) {
+                System.out.println("分數:" + score1 + "--超棒");
+            } else if((score1 > 80) && (score1 < 90)) {
+                System.out.println("分數:" + score + "--很好");
+            } else if(score1 > 60 && score1 < 80 ) {
+                System.out.println("分數:" + score1 + "--好");
+            } else {
+                System.out.println("分數:" + score1 + "--請加油");
+            }
+            
+        }
+
+       
+       
     }
 }
