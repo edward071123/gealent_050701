@@ -83,20 +83,30 @@ public class Condition {
         // 迴圈 (loop) 
         // for loop
         //  起始值           可以進來的條件  每次先加1
-        for(int index = 0;  index <= 100;  index++) {
-            // System.out.println(index);
-            int score1 = index;
+        // for(int index = 0;  index <= 100;  index++) {
+        //     // System.out.println(index);
+        //     int score1 = index;
 
-            if(score1 >= 90) {
-                System.out.println("分數:" + score1 + "--超棒");
-            } else if((score1 > 80) && (score1 < 90)) {
-                System.out.println("分數:" + score + "--很好");
-            } else if(score1 > 60 && score1 < 80 ) {
-                System.out.println("分數:" + score1 + "--好");
-            } else {
-                System.out.println("分數:" + score1 + "--請加油");
-            }
+        //     if(score1 >= 90) {
+        //         System.out.println("分數:" + score1 + "--超棒");
+        //     } else if((score1 > 80) && (score1 < 90)) {
+        //         System.out.println("分數:" + score + "--很好");
+        //     } else if(score1 > 60 && score1 < 80 ) {
+        //         System.out.println("分數:" + score1 + "--好");
+        //     } else {
+        //         System.out.println("分數:" + score1 + "--請加油");
+        //     }
             
+        // }
+
+        // 外面i 表示天數
+        // 裡面k　表示遊玩次數
+        // 想像 你有10天 每1天可以玩此遊樂設施10次
+
+        for(int i = 1; i <= 10; i++) {
+            for(int k = 1; k <= 10; k++) {
+                System.out.println("第" + i + "天遊玩第" + k + "次");
+            }
         }
 
        
