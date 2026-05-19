@@ -4,16 +4,16 @@ public class RomanToInt {
     public static void main(String[] args) {
         // 練習作業
         // Symbol Value
-        // I 1
-        // V 5
-        // X 10
-        // L 50
-        // C 100
-        // D 500
-        // M 1000
+        // I        1
+        // V        5
+        // X        10
+        // L        50
+        // C        100
+        // D        500
+        // M        1000
 
-        // I , II, III, IV , V, VI, VII, VIII, IX , X , XI
-        // 1 , 2 , 3 , 4 , 5, 6 , 7 , 8 , 9 , 10 , 11
+        // I , II , III ,  IV ,  V  ,  VI ,  VII ,  VIII , IX , X  , XI
+        // 1 , 2  , 3   ,  4  ,  5  ,  6  ,  7   ,  8    , 9  , 10 , 11
 
         // 有有六個地方用到了減法
         // I 在 Ｖ(5) 和 X(10) 左邊就會變成 4 跟 9
