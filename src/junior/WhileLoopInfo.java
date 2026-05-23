@@ -38,7 +38,7 @@ public class WhileLoopInfo {
         // }
         // System.out.println("while 迴圈結束");
 
-        // 設定結束的起始條件: true:真的結束, false:還沒結束
+        // // 設定結束的起始條件: true:真的結束, false:還沒結束
         // boolean end = false;
 
         // Scanner sc = new Scanner(System.in);
@@ -46,6 +46,7 @@ public class WhileLoopInfo {
         // int totalMoney = 0;
         // while (end == false) {
         // System.out.println("請輸入要辦理項目,1:提領,2:存款,3:餘額查詢,4:結束");
+        // // 偵測輸入存到變數(getInputNum)裡
         // int getInputNum = sc.nextInt();
 
         // if (getInputNum == 1) {
@@ -54,7 +55,7 @@ public class WhileLoopInfo {
         // totalMoney -= 1000;
         // System.out.println("您已提領1000元成功");
         // } else {
-        // System.out.println("您的餘額不足");
+        // System.out.println("餘額不足，無法提領");
         // }
         // } else if (getInputNum == 2) {
         // totalMoney += 1000;
@@ -85,9 +86,23 @@ public class WhileLoopInfo {
             int getInputNum = sc2.nextInt();
             // 防呆 檢查一：檢查數字有沒有在 1 ~ 100 的範圍內
             if (getInputNum >= 1 && getInputNum <= 100) {
-                System.out.println("您輸入的數字為:" + getInputNum);
-                numbers[count] = getInputNum;
-                count++;
+                // 檢查二 : 不能重複
+                boolean isDuplicate = false; // false:是沒有重複的, true:有重複的
+                for (int i = 0; i < count; i++) {
+                    if (numbers[i] == getInputNum) {
+                        isDuplicate = true;
+                        // 中斷for迴圈
+                        break;
+                    }
+                }
+                if (isDuplicate == false) {
+                    // 判斷條件成功 才把數字存到陣列裡 並且讓count+1
+                    System.out.println("您輸入的數字為:" + getInputNum);
+                    numbers[count] = getInputNum;
+                    count++;
+                } else {
+                    System.out.println("您輸入的數字已經存在,請重新輸入");
+                }
             } else {
                 System.out.println("您輸入的數字不在1 ~ 100 的範圍內,請重新輸入");
             }
@@ -98,5 +113,33 @@ public class WhileLoopInfo {
             System.out.print(numbers[z] + ",");
         }
         sc2.close();
+
+        // 課堂練習2
+        // 情境： 用while寫一個程式模擬登入系統，只要使用者輸入的密碼錯誤，程式就會一直要求重新輸入，直到輸入正確為止
+        // 請輸入密碼：
+        // 1234
+        // 密碼錯誤，請重新輸入：
+        // abcd
+        // 密碼錯誤，請重新輸入：
+        // java123
+        // 登入成功！歡迎系統。
+
+        // Scanner sc3 = new Scanner(System.in);
+        // String correctPassword = "java123";
+        // boolean isLogin1 = false; // false: 還沒登入成功(跑回圈), true: 已經登入成功(結束回圈)
+        // // int isLogin2 = 0; // 0: 還沒登入成功(跑回圈), 1: 已經登入成功(結束回圈)
+        // System.out.println("請輸入密碼:");
+        // while (isLogin1 == false) {
+        // String inputPassword = sc3.nextLine();
+        // // String的比較要用equals方法, 不能用==
+        // // int a == 10; // true
+        // if (inputPassword.equals(correctPassword)) {
+        // System.out.println("登入成功！歡迎系統。");
+        // isLogin1 = true;
+        // } else {
+        // System.out.println("密碼錯誤，請重新輸入：");
+        // }
+        // }
+        // sc3.close();
     }
 }
