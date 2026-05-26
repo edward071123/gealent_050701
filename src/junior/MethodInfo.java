@@ -15,7 +15,22 @@ public class MethodInfo {
         printHello4("Ben", 8);
 
         String[] names = { "Edward1", "David1", "Allen1" };
+        // for(int z = 0; z < names.length; z++) {
+        // System.out.println("Hello, " + names[z]);
+        // }
         printHello5(names);
+
+        String[] names2 = { "Edward2", "David2", "Allen2" };
+        printHello5(names2);
+
+        int nums[] = { 1, 2, 3, 4, 5 };
+        printHello6(names2, nums);
+
+        int result = add(3, 5);
+        System.out.println("3 + 5 = " + result);
+
+        String strResult = stringAdd("Hello1, ", "World1!");
+        System.out.println(strResult);
     }
 
     // 方法(Method)的定義 其他語言或許是function
@@ -50,6 +65,31 @@ public class MethodInfo {
         for (int i = 0; i < names.length; i++) {
             System.out.println("Hello, " + names[i] + "!");
         }
+    }
+
+    // String[] names = {"Edward", "David", "Allen"};
+    // int[] nums = {1, 2, 3, 4, 5};
+    // 如何印出以下結果:
+    // Hello, Edward, 1!
+    // Hello, David, 2!
+    // Hello, Allen, 3!
+    // Hello, empty, 4!
+    // Hello, empty, 5!
+
+    public static void printHello6(String[] names, int[] nums) {
+        for (int i = 0; i < names.length; i++) {
+            System.out.println("Hello, " + names[i] + "!");
+        }
+    }
+
+    public static int add(int num1, int num2) {
+        int sum = num1 + num2;
+        return sum;
+    }
+
+    public static String stringAdd(String str1, String str2) {
+        String strResult = str1 + str2;
+        return strResult;
     }
 
 }
