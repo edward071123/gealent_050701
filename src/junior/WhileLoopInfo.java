@@ -181,13 +181,14 @@ public class WhileLoopInfo {
         System.out.println("遊戲開始！請猜一個 " + min + " ~ " + max + " 的數字：");
 
         while (isGuessCorrect == false) {
-            int guess = sc4.nextInt();
-
             if (!sc4.hasNextInt()) {
                 System.out.print("⚠️ 錯誤：只能輸入整數喔！請再猜一次：");
                 sc4.next(); // 重要：把剛剛輸入錯誤的「爛資料」從緩衝區清除掉
                 continue;       // 重新進入迴圈，等待下一次輸入
             }
+            int guess = sc4.nextInt();
+            sc4.nextLine();
+           
             // 不管猜大猜小或是猜成功，猜的次數+1
             guessCount++;
             
