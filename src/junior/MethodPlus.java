@@ -46,10 +46,10 @@ public class MethodPlus {
         // 切割 "MCMXCIV" 變成 ['M', 'C', 'M', 'X', 'C', 'I', 'V']
         for (int i = input.length() - 1; i >= 0; i--) {
             // System.out.print(input.charAt(i));
-            int getValue = 0;
             // charAt(i) 取得單一字元
             char inputChar = input.charAt(i);
-            getValue = translate(inputChar);
+            // 呼叫translate方法 輸入單一字元 回傳對應的數值
+            int getValue = translate(inputChar);
             if (lastValue > getValue) {
                 result -= getValue;
             } else {
