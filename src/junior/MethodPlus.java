@@ -167,6 +167,7 @@ public class MethodPlus {
     }
 
     // int[] arrs = { 1, 2, 3, 4, 5 };
+    // int[] result = { 5, 4, 3, 2, 1 };
     public static int[] reverseArray(int[] arrs) {
         int[] result = new int[arrs.length];
         for (int i = 0; i < arrs.length; i++) {
@@ -183,5 +184,36 @@ public class MethodPlus {
         }
 
         return result;
+    }
+
+    // int[] nums = { 1, 2, 3, 4, 5, 1 };
+    // i = 0 => nums[0] = 1 .. 外迴圈
+
+    // j = 1 => nums[1] = 2 .. 內迴圈
+    // j = 2 => nums[2] = 3 .. 內迴圈
+    // j = 3 => nums[3] = 4 .. 內迴圈
+    // j = 4 => nums[4] = 5 .. 內迴圈
+    // j = 5 => nums[5] = 1 .. 內迴圈
+    // =========================================
+    // i = 1 => nums[1] = 2 .. 外迴圈
+
+    // j = 2 => nums[2] = 3 .. 內迴圈
+    // j = 3 => nums[3] = 4 .. 內迴圈
+    // j = 4 => nums[4] = 5 .. 內迴圈
+    // j = 5 => nums[5] = 1 .. 內迴圈
+    public static boolean containsDuplicate(int[] nums) {
+        // false => 沒有重複元素
+        // true => 有重複元素
+        boolean hasDuplicate = false;
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
+                // 跟下一個元素去比對
+                if (nums[i] == nums[j]) {
+                    hasDuplicate = true;
+                    break;
+                }
+            }
+        }
+        return hasDuplicate;
     }
 }
