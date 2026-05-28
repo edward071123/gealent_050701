@@ -3,18 +3,35 @@ package junior;
 public class MethodPlus {
     public static void main(String[] args) {
         // 做一個印出金字塔的方法 我要可以輸入金字塔的層數
-        printPyramid(5);
+        // printPyramid(5);
 
         // 羅馬數字轉阿拉伯數字的方法 回傳型態為int
-        int result = romanToInt("MCMXCIV");
-        System.out.println("羅馬數字 MCMXCIV 轉換為阿拉伯數字為: " + result);
+        // int result = romanToInt("MCMXCIV");
+        // System.out.println("羅馬數字 MCMXCIV 轉換為阿拉伯數字為: " + result);
 
         // findMax 方法 輸入一個整數的陣列 回傳陣列內的最大值
         // findMax(int[] numbers) 回傳型態為int
-        int[] numbers = { 1, 5, 3, 9, 2 };
-        int max = findMax(numbers);
-        System.out.println("陣列內的最大值為: " + max);
+        // int[] numbers = { 1, 5, 3, 9, 2, 12, 15, 99, 4 };
+        // int max = findMax(numbers);
+        // System.out.println("陣列內的最大值為: " + max);
 
+        // 課程練習1 寫一個方法 叫做 calScore 輸入一個int的陣列 scores
+        // 回傳一個int陣列 result 內容為 {平均分數, 總分數, 最高分數, 最低分數}
+        // int[] scores = { 80, 90, 70, 60, 85 };
+        int[] result = calScore(new int[] { 80, 90, 70, 60, 85 });
+        System.out.println("平均分數: " + result[0]);
+        System.out.println("總分數: " + result[1]);
+        System.out.println("最高分數: " + result[2]);
+        System.out.println("最低分數: " + result[3]);
+
+        // 課程練習2 寫一個方法 叫做 reverseArray 輸入一個int的陣列 arrs
+        // 回傳一個int陣列 result 內容為 arrs的反轉
+        // int[] arrs = { 1, 2, 3, 4, 5 };
+        // int[] reverseArrs = reverseArray(arrs);
+        // System.out.println("反轉後的陣列為: " + Arrays.toString(reverseArrs));
+        // { 5, 4, 3, 2, 1 }
+        // tip: 先在方法內新增一個新的陣列 result 來存放反轉後的結果
+        // int[] result = new int[arrs.length];
     }
 
     public static void printPyramid(int level) {
@@ -90,8 +107,8 @@ public class MethodPlus {
     }
 
     public static int findMax(int[] numbers) {
-        int max = numbers[0];
-        for (int i = 1; i < numbers.length; i++) {
+        int max = 0;
+        for (int i = 0; i < numbers.length; i++) {
             if (numbers[i] > max) {
                 max = numbers[i];
             }
@@ -99,4 +116,42 @@ public class MethodPlus {
         // 回傳最大值
         return max;
     }
+
+    // int[] scores = { 80, 90, 70, 60, 85 };
+    public static int[] calScore(int[] scores) {
+        int reslt[] = new int[4];
+        int max = scores[0];
+        int min = scores[0];
+        int sum = 0;
+        int avg = 0;
+        for (int i = 0; i < scores.length; i++) {
+            sum = sum + scores[i];
+            // sum += scores[i]; // sum = sum + scores[i] 的簡寫
+
+            if (scores[i] > max) {
+                max = scores[i];
+            }
+
+            if (scores[i] < min) {
+                min = scores[i];
+            }
+        }
+        // 平均分數 = 總分數 / 分數的個數
+        avg = sum / scores.length;
+
+        // 檢查用
+        // System.out.println("陣列內的最大值為: " + max);
+        // System.out.println("陣列內的最小值為: " + min);
+        // System.out.println("陣列內的總分為: " + sum);
+        // System.out.println("陣列內的平均分數為: " + avg);
+
+        // {平均分數, 總分數, 最高分數, 最低分數}
+        reslt[0] = avg;
+        reslt[1] = sum;
+        reslt[2] = max;
+        reslt[3] = min;
+        // 回傳陣列
+        return reslt;
+    }
+
 }
