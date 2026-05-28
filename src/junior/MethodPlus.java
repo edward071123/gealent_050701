@@ -1,5 +1,7 @@
 package junior;
 
+import java.util.Arrays;
+
 public class MethodPlus {
     public static void main(String[] args) {
         // 做一個印出金字塔的方法 我要可以輸入金字塔的層數
@@ -32,6 +34,16 @@ public class MethodPlus {
         // { 5, 4, 3, 2, 1 }
         // tip: 先在方法內新增一個新的陣列 result 來存放反轉後的結果
         // int[] result = new int[arrs.length];
+        int[] arrs = { 1, 2, 3, 4, 5 };
+        int[] reverseArrs = reverseArray(arrs);
+        // Arrays.toString() 是一個可以把陣列轉成字串的工具方法
+        System.out.println("反轉後的陣列為: " + Arrays.toString(reverseArrs));
+
+        // 課程練習3 檢查是否有重複元素
+        // 寫一個方法 containsDuplicate 輸入一個int的陣列 nums
+        // 回傳一個boolean 如果陣列內有重複元素回傳true 沒有重複元素回傳false
+        // int[] nums = { 1, 2, 3, 4, 5, 1 }; => true
+        // int[] nums = { 1, 2, 3, 4, 5 }; => false
     }
 
     public static void printPyramid(int level) {
@@ -154,4 +166,22 @@ public class MethodPlus {
         return reslt;
     }
 
+    // int[] arrs = { 1, 2, 3, 4, 5 };
+    public static int[] reverseArray(int[] arrs) {
+        int[] result = new int[arrs.length];
+        for (int i = 0; i < arrs.length; i++) {
+            // 推理過程
+            // result[0] = arrs[arrs.length - 1];
+            // result[1] = arrs[arrs.length - 2];
+            // result[2] = arrs[arrs.length - 3];
+            // result[3] = arrs[arrs.length - 4];
+            // .
+            // .
+            // .
+            // result[n] = arrs[arrs.length - (n + 1)];
+            result[i] = arrs[arrs.length - (i + 1)];
+        }
+
+        return result;
+    }
 }
