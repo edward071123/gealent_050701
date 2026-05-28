@@ -44,6 +44,10 @@ public class MethodPlus {
         // 回傳一個boolean 如果陣列內有重複元素回傳true 沒有重複元素回傳false
         // int[] nums = { 1, 2, 3, 4, 5, 1 }; => true
         // int[] nums = { 1, 2, 3, 4, 5 }; => false
+        int[] nums = { 1, 2, 3, 4, 5, 1 };
+        int[] nums1 = { 1, 2, 3, 4, 5 };
+        System.out.println("檢查元素是否重複的陣列(nums)結果: " + containsDuplicate(nums));
+        System.out.println("檢查元素是否重複的陣列(nums1)結果: " + containsDuplicate(nums1));
     }
 
     public static void printPyramid(int level) {
