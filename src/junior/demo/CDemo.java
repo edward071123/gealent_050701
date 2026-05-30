@@ -24,17 +24,27 @@ public class CDemo {
         // 屬性: int length, int width
         // 方法: calculateArea() 回傳型態為int, 計算長方形的面積 length * width
         // 還要實體化物件來測試方法的功能
-        Area area1 = new Area();
-        area1.length = 5;
-        area1.width = 3;
-        int areaResult1 = area1.calculateArea();
-        System.out.println("長方形的面積為: " + areaResult1);
+        // Area area1 = new Area();
+        // area1.length = 5;
+        // area1.width = 3;
+        // int areaResult1 = area1.calculateArea();
+        // System.out.println("長方形的面積為: " + areaResult1);
 
         Area1 area2 = new Area1();
         area2.length = 5;
         area2.width = 3;
         int areaResult2 = area2.calculateArea();
         System.out.println("長方形的面積為: " + areaResult2);
+
+        // 建構子使用
+        Car1 car11 = new Car1("BMW", "Blue");
+        System.out.println("車子的品牌: " + car11.brand);
+        System.out.println("車子的顏色: " + car11.color);
+
+        // 課堂練習2 - 改寫Area類別, 加入建構子來初始化length和width, 並且實體化物件來測試建構子的功能
+        // Area area1 = new Area(5, 3);
+        // int areaResult1 = area1.calculateArea();
+        // System.out.println("長方形的面積為: " + areaResult1);
     }
 
 }
