@@ -42,9 +42,22 @@ public class CDemo {
         System.out.println("車子的顏色: " + car11.color);
 
         // 課堂練習2 - 改寫Area類別, 加入建構子來初始化length和width, 並且實體化物件來測試建構子的功能
-        // Area area1 = new Area(5, 3);
-        // int areaResult1 = area1.calculateArea();
-        // System.out.println("長方形的面積為: " + areaResult1);
+        Area area1 = new Area(5, 3);
+        int areaResult1 = area1.calculateArea();
+        System.out.println("長方形的面積為: " + areaResult1);
+
+        // 多載 (Overloading) - 同一個方法名稱, 但是參數不同
+        // 長方形的面積計算
+        int areaResult3 = area1.calculateArea();
+        System.out.println("長方形的面積為: " + areaResult3);
+
+        // 圓形的面積計算
+        double areaResult4 = area1.calculateArea(5);
+        System.out.println("圓形的面積為: " + areaResult4);
+
+        // 三角形的面積計算
+        double areaResult5 = area1.calculateArea(5, 3);
+        System.out.println("三角形的面積為: " + areaResult5);
     }
 
 }
