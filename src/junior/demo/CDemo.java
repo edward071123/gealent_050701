@@ -58,6 +58,20 @@ public class CDemo {
         // 三角形的面積計算
         double areaResult5 = area1.calculateArea(5, 3);
         System.out.println("三角形的面積為: " + areaResult5);
+
+        // 課堂練習3 - 用多載改寫Area類別的建構子
+        // 讓一開始不帶參數也可以跑出來, 但是預設length和width都是0
+        Area area3 = new Area();
+        area3.length = 5;
+        area3.width = 3;
+        int areaResult6 = area3.calculateArea();
+        System.out.println("長方形的面積為: " + areaResult6);
+
+        // 課堂練習4 - 在Area類別中加入一個方法, 用來計算梯形的面積
+        // 梯形的面積計算公式: (上底 + 下底) * 高 / 2
+        // 這個方法的參數為 int topBase, int bottomBase, int height, 回傳型態為double
+        double areaResult7 = area1.calculateArea(5, 7, 3);
+        System.out.println("梯形的面積為: " + areaResult7);
     }
 
 }
