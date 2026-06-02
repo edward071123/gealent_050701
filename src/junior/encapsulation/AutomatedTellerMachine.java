@@ -5,6 +5,27 @@ public class AutomatedTellerMachine {
     private String account;
     private String password;
     private double balance;
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    // 自定義方法 讀取或寫入屬性的值，來達到存取和修改資料的目的
+    // 不一定要寫setter方法 也可以寫其他方法 來達到存取和修改資料的目的
+    // 裡面會多一些防呆的邏輯 來保護資料的安全性 才可以寫入資料
+    public void saveName(String name) {
+        if (name.length() > 0) {
+            if (name.equals("admin")) {
+                System.out.println("名字不能為 admin");
+            } else {
+                this.name = name;
+            }
+
+        } else {
+            System.out.println("名字不能為空");
+        }
+    }
 
     // getter(讀取) 和 setter(寫入) 方法，提供外界存取和修改資料的方式(窗口)
 

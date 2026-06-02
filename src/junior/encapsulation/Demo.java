@@ -2,6 +2,7 @@ package junior.encapsulation;
 
 public class Demo {
     public static void main(String[] args) {
+        // 封裝基本介紹 用atm1來示範封裝的概念跟 不安全的存取方式
         AutomatedTellerMachine atm1 = new AutomatedTellerMachine();
 
         // 不一定透過 getter 和 setter 方法來存取和修改資料
