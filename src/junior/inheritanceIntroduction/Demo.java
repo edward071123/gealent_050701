@@ -17,6 +17,12 @@ public class Demo {
         System.out.println("Using Cat class:");
         cat1.eat();
         cat1.sleep(); // 呼叫從父類別繼承來的方法
+        System.out.println("-----------------------------");
+        // 課堂練習1: 創建一個類別叫做 Bird, 繼承自 Animal 類別, 並覆寫 eat 方法
+        Bird bird1 = new Bird();
+        System.out.println("Using Bird class:");
+        bird1.eat();
+        bird1.sleep(); // 呼叫從父類別繼承來的方法
 
     }
 }

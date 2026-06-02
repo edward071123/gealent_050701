@@ -1,6 +1,12 @@
 package junior.inheritanceIntroduction;
 
 public class Animal {
+
+    public Animal() {
+        // 建構子
+        System.out.println("Animal 初始化");
+    }
+
     public void eat() {
         System.out.println("Animal1 is eating.");
     }
