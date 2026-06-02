@@ -10,5 +10,8 @@ public class Demo {
 
         // 課堂練習2: 建立一個Cat類別繼承Animal類別，並新增一個屬性color，
         // 然後覆寫eat方法，最後在main方法中建立一個Cat物件並呼叫eat方法。
+        System.out.println("-----------------------------");
+        Cat cat1 = new Cat("咪咪", 2, "黑色");
+        cat1.eat();
     }
 }
