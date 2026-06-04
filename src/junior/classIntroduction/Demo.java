@@ -1,6 +1,6 @@
-package junior.demo;
+package junior.classIntroduction;
 
-public class CDemo {
+public class Demo {
     public static void main(String[] args) {
         // 實體化物件 - 透過類別來創造一個物件
         // class -> object

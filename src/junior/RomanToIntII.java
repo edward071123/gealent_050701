@@ -12,19 +12,19 @@ public class RomanToIntII {
         // M 1000
 
         // if (input.charAt(i) == 'I') {
-        // getValue = 1;
+        //     getValue = 1;
         // } else if (input.charAt(i) == 'V') {
-        // getValue = 5;
+        //     getValue = 5;
         // } else if (input.charAt(i) == 'X') {
-        // getValue = 10;
+        //     getValue = 10;
         // } else if (input.charAt(i) == 'L') {
-        // getValue = 50;
+        //     getValue = 50;
         // } else if (input.charAt(i) == 'C') {
-        // getValue = 100;
+        //     getValue = 100;
         // } else if (input.charAt(i) == 'D') {
-        // getValue = 500;
+        //     getValue = 500;
         // } else {
-        // getValue = 1000;
+        //     getValue = 1000;
         // }
 
         // 有有六個地方用到了減法

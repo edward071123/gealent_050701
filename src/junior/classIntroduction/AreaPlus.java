@@ -1,4 +1,4 @@
-package junior.demo;
+package junior.classIntroduction;
 
 public class AreaPlus {
     public double circleArea;

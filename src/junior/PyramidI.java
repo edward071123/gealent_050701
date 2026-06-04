@@ -1,6 +1,6 @@
 package junior;
 
-public class Pyramid {
+public class PyramidI {
     public static void main(String[] args) {
         //*
         //**
