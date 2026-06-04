@@ -78,7 +78,7 @@ public class AutomatedTellerMachine {
             }
         }
 
-        // 檢查輸入次數是否超過三次 如果超過三次 就鎖帳號
+        // 檢查輸入錯誤次數是否超過三次 如果超過三次 就鎖帳號
         if (errorTimes >= 3) {
             System.out.println("帳號密碼輸入錯誤已超過三次,帳號已鎖定,請洽銀行");
         } else {
