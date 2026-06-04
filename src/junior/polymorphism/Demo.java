@@ -24,7 +24,7 @@ public class Demo {
         emp22.calculateSalary();
         emp23.calculateSalary();
         // ------------------ 使用多型處理 ------------------
-        System.out.println("---------------------以下用多型＋array+for處理---------------------------");
+        System.out.println("---------------------以下用多型+array+for處理---------------------------");
         // ------------------ 使用多型 + array + for 處理 ------------------
         Employee[] employees = {
                 new Employee("David", 45000),
