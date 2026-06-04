@@ -10,11 +10,11 @@ public class Demo {
         atm1.transaction();
 
         // 封裝的課後練習
-        // 1. 冷氣機的控制 AirConditioner
+        // 1. 冷氣機的控制 class: AirConditioner
         // 屬性: temperature(int)
         // 設定溫度防呆: 溫度要在16-30度之間
         // 要有設定溫度的方法, 還要取得溫度的方法
-        // 2. Netflix的會員系統 NetflixMember
+        // 2. Netflix的會員系統 class: NetflixMember
         // 屬性: name(String), vip(boolean)
         // 初始化就設定好會員名稱name, vip是false
         // 方法是升級會員 upgradeToVip()
