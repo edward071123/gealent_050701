@@ -8,11 +8,11 @@ public class Dragon implements IFlyable, IFireable {
     }
 
     public void circle() {
-        System.out.println("龍有盤旋飛行的技能");
+        System.out.println("龍有順時鐘盤旋飛行的技能");
     }
 
     public void fire() {
-        System.out.println("龍有噴火的技能");
+        System.out.println("龍有噴火溫度2000度的技能");
     }
 
 }
