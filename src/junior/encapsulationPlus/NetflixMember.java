@@ -3,7 +3,7 @@ package junior.encapsulationPlus;
 // 2. Netflix 會員系統
 public class NetflixMember {
     private String name;
-    private boolean vip;
+    private boolean vip; // false:VIP未啟動, true:VIP已啟動
 
     // 建構子
     public NetflixMember(String name) {

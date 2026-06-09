@@ -23,6 +23,7 @@ public class Demo {
 
         // AirConditioner 測試
         AirConditioner ac = new AirConditioner();
+        System.out.println("目前溫度：" + ac.getTemperature());
         ac.setTemperature(25);
         System.out.println("目前溫度：" + ac.getTemperature());
         // 設定超出範圍的溫度
@@ -30,11 +31,8 @@ public class Demo {
 
         // NetflixMember 測試
         NetflixMember member = new NetflixMember("小明");
-
         member.watchMovie(); // 不能看
-
         member.upgradeToVip();
-
         member.watchMovie(); // 可以看
     }
 }

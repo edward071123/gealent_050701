@@ -18,7 +18,6 @@ public class Demo {
         // Main(程式進入點) 內用多型 + array + for 印出
         // 名稱, 甜度, 冰塊, 價格
         // 用飲料的價位 且判斷 飲料超過60元 後面接著輸出"高價飲料", 否則為"一般飲料"
-        // 總共訂了幾杯
         // 總金額
 
         // 輸出結果如下:
@@ -49,36 +48,59 @@ public class Demo {
         // 總金額：155 元
 
         Drink[] drinks = {
-                new BlackTea(2, 1),          // 半糖微冰
-                new MilkTea(1, 2, true),     // 少糖少冰加珍珠
-                new Coffee(0, 0, true)       // 無糖去冰大杯
+                new BlackTea(2, 1), // 全糖微冰
+                new MilkTea(1, 2, true), // 半糖正常冰加珍珠
+                new Coffee(0, 0, true) // 無糖去冰大杯
         };
 
         int total = 0;
 
-        for (Drink drink : drinks) {
-
+        // foreach loop
+        // 前面是單一陣列內的內容
+        // 後面是陣列
+        for (Drink drink1 : drinks) {
+            // Drink drink1 = drinks[i];
             System.out.println("==========");
-
-            System.out.println("名稱：" + drink.getName());
-
-            System.out.println("甜度：" + drink.getSugarLevel());
-
-            System.out.println("冰塊：" + drink.getIceLevel());
-
-            System.out.println("價格：" + drink.calculatePrice());
-
-            if (drink.calculatePrice() > 60) {
+            System.out.println("名稱：" + drink1.getName());
+            System.out.println("甜度：" + drink1.getSugarLevel());
+            System.out.println("冰塊：" + drink1.getIceLevel());
+            System.out.println("價格：" + drink1.calculatePrice());
+            if (drink1.calculatePrice() > 60) {
                 System.out.println("高價飲料");
             } else {
                 System.out.println("一般飲料");
             }
 
-            total += drink.calculatePrice();
+            total += drink1.calculatePrice();
         }
 
         System.out.println("==========");
 
         System.out.println("總金額：" + total + " 元");
+
+        // ==========================================================================================
+        // foreach vs for 舉例
+        int[] numbers = { 1, 2, 3, 4, 5 };
+
+        // 1 -> 5
+        // 所有元素都跑過一輪
+        int count = 1;
+        for (int n : numbers) {
+            System.out.println(n);
+            count++;
+        }
+
+        // 1 -> 5
+        // 取決於i++ or i=i+2 or i=i+3
+        for (int i = 0; i < 3; i++) {
+            int n = numbers[i];
+            System.out.println(n);
+        }
+
+        // 5 -> 1
+        for (int i = numbers.length - 1; i >= 0; i--) {
+            System.out.println(numbers[i]);
+        }
+        // ==========================================================================================
     }
 }

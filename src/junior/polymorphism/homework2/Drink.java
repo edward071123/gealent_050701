@@ -26,25 +26,25 @@ public class Drink {
         if (this.sugarLevel == 1) {
             return "半糖";
         }
-        
+
         if (this.sugarLevel == 2) {
             return "全糖";
         }
-        
+
         return "無糖";
     }
 
     public String getIceLevel() {
         // 0:去冰, 1:微冰, 2:正常冰
-        if (this.sugarLevel == 1) {
+        if (this.iceLevel == 1) {
             return "微冰";
         }
-        
-        if (this.sugarLevel == 2) {
+
+        if (this.iceLevel == 2) {
             return "正常冰";
         }
-        
-        return  "去冰";
+
+        return "去冰";
     }
 
     public void setName(String name) {
