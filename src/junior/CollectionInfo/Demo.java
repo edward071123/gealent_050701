@@ -1,4 +1,4 @@
-package junior.CollectionInfo;
+package junior.collectionInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
