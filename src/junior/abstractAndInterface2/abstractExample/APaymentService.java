@@ -15,7 +15,6 @@ public abstract class APaymentService {
     public final void pay(int amount) {
         // 驗證後會回傳錯誤訊息, 若是空的表示沒錯誤
         String validationMessage = validateAmount(amount);
-
         // 驗證失敗, 有錯誤訊息直接顯示
         if (!validationMessage.isEmpty()) {
             System.out.println(validationMessage);
@@ -34,6 +33,7 @@ public abstract class APaymentService {
     protected abstract void processPayment(int amount, int fee);
 
     // 共用方法實作：子類別不需要重複驗證與計算手續費。
+
     private String validateAmount(int amount) {
         if (amount <= 0) {
             return "付款金額必須大於0";
