@@ -31,17 +31,18 @@ public abstract class APaymentService {
             // 有回傳訊息表示驗證失敗
             System.out.println(validateAmountMessage);
             System.out.println(getPaymaneName() + "付款失敗");
+        } else {
+            // 2. 計算手續費
+            int fee = calculateFee(amount);
+            System.out.println("開始使用" + getPaymaneName() + "付款");
+
+            // 3.付款流程: 串接金流
+            processPayment(amount, fee);
+
+            // 4. 印出明細
+            printPaymentResult(amount, fee);
         }
 
-        // 2. 計算手續費
-        int fee = calculateFee(amount);
-        System.out.println("開始使用" + getPaymaneName() + "付款");
-
-        // 3.付款流程: 串接金流
-        processPayment(amount, fee);
-
-        // 4. 印出明細
-        printPaymentResult(amount, fee);
     }
 
     // private: 私有, 只能在自己類別內呼叫
