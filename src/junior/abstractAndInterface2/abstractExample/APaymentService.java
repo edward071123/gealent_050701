@@ -8,11 +8,13 @@ public abstract class APaymentService {
     private final String paymaneName;
     private final double feeRate;
 
+    // 建構子賦值
     public APaymentService(String paymaneName, double feeRate) {
         this.paymaneName = paymaneName;
         this.feeRate = feeRate;
     }
 
+    // getter
     public double getFeeRate() {
         return this.feeRate;
     }
@@ -21,6 +23,7 @@ public abstract class APaymentService {
         return this.paymaneName;
     }
 
+    // 付款總流程
     public void pay(int amount) {
         // 1. 驗證付款金額
         String validateAmountMessage = validateAmount(amount);
@@ -53,6 +56,7 @@ public abstract class APaymentService {
 
     // 計算手續費
     private int calculateFee(int amount) {
+        // 轉型介紹
         // String to int
         // String t1 = "20";
         // int t2 = Integer.parseInt(t1);
