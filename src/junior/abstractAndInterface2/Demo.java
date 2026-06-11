@@ -7,7 +7,7 @@ import junior.abstractAndInterface2.abstractExample.AOrderService;
 public class Demo {
     public static void main(String[] args) {
 
-        // 使用LinePay付款(ALinePayPaymentService)
+        // 使用LinePay付款(ALinePayPaymentService) 物件(object)先比喻成模組(module)
         ALinePayPaymentService linePayPayment = new ALinePayPaymentService();
         // new 就是類別(class)已經被生產出來 變成物件(object)
         AOrderService order1 = new AOrderService(linePayPayment);
