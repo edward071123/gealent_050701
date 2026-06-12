@@ -6,8 +6,9 @@ import junior.abstractAndInterface2.abstractExample.AOrder;
 
 public class Demo {
     public static void main(String[] args) {
-        
 
+        // 範例互動網站:
+        // https://edward071123.github.io/gealent_050701/src/junior/abstractAndInterface2/object-call-visualizer.html
 
         // 使用LinePay付款(ALinePay) 物件(object)先比喻成模組(module)
         ALinePay linePayPayment = new ALinePay();
