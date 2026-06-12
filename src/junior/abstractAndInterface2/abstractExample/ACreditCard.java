@@ -1,7 +1,7 @@
 package junior.abstractAndInterface2.abstractExample;
 
-public class ACreditCardPaymentService extends APaymentService {
-    public ACreditCardPaymentService() {
+public class ACreditCard extends APayment {
+    public ACreditCard() {
         super("信用卡", 0.03);
     }
 

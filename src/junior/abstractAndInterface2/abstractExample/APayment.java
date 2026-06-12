@@ -1,6 +1,6 @@
 package junior.abstractAndInterface2.abstractExample;
 
-public abstract class APaymentService {
+public abstract class APayment {
     // 共用的屬性: 所有付款方式都有名稱(paymaneName)跟手續費率(feeRate)
     // 屬性用到finale關鍵字: 只能設定一次, 通常在宣告時或是在建構子賦值, 無需寫setter
     // private final String paymaneName = "aa";
@@ -9,7 +9,7 @@ public abstract class APaymentService {
     private final double feeRate;
 
     // 建構子賦值
-    public APaymentService(String paymaneName, double feeRate) {
+    public APayment(String paymaneName, double feeRate) {
         this.paymaneName = paymaneName;
         this.feeRate = feeRate;
     }

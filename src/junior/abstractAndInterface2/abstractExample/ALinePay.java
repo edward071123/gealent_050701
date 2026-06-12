@@ -1,7 +1,7 @@
 package junior.abstractAndInterface2.abstractExample;
 
-public class ALinePayPaymentService extends APaymentService {
-    public ALinePayPaymentService() {
+public class ALinePay extends APayment {
+    public ALinePay() {
         super("LinePay", 0.01);
     }
 
