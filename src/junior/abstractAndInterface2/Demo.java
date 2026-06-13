@@ -7,8 +7,44 @@ import junior.abstractAndInterface2.abstractExample.AOrder;
 public class Demo {
     public static void main(String[] args) {
 
+        /* 課後練習: 請練習此範例至少三次
+         * 1. 先建立抽象類別:APayment
+         *    兩個屬性: paymaneName(付款名稱), feeRate(手續費率)
+         * 
+         *    建構子: public APayment(String paymaneName, double feeRate)
+         * 
+         *    共同方法: public void pay(int amount)
+         * 
+         *    抽象方法: public abstract void processPayment(int amount, int fee)
+         *
+         *    私有方法: private String validateAmount(int amount)
+         *             private int calculateFee(int amount)
+         *             private void printPaymentResult(int amount, double fee)
+         * 
+         * 2. 建立付款方式的一般類別且都要繼承APayment: 
+         *    信用卡: ACreditCard
+         *    LinePay: ALinePay
+         *    
+         *    需要建構子: 記得內容也要用super
+         *    
+         *    需要實做出繼承的抽象方法: public void processPayment(int amount, int fee)
+         *
+         * 3. 建立一般類別AOrder
+         *    建構子: 付款的物件傳入(物件注入)
+         *    
+         *    建立公開發方法: createOrderLinePay(int amount)
+         *                   createOrderCreditCard(int amount)
+         * 
+         *    公開方法的內容為: 印出"建立訂單(付款名稱)"
+         *                   呼叫付款物件的pay方法
+         * 
+         * 4. 在程式進入點內 實體化AOrder 類別且呼叫 createOrderLinePay or createOrderCreditCard 方法
+         *  
+         */
+
         // 範例互動網站:
         // https://edward071123.github.io/gealent_050701/src/junior/abstractAndInterface2/object-call-visualizer.html
+
 
         // 使用LinePay付款(ALinePay) 物件(object)先比喻成模組(module)
         ALinePay linePayPayment = new ALinePay();
