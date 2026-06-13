@@ -37,6 +37,7 @@ public abstract class APayment {
             System.out.println("開始使用" + getPaymaneName() + "付款");
 
             // 3.付款流程: 串接金流
+            // 各家都有各家的串接標準, 呼叫子類別(ALinePay, ACreditCard)的實作金流方法
             processPayment(amount, fee);
 
             // 4. 印出明細
@@ -46,7 +47,7 @@ public abstract class APayment {
     }
 
     // private: 私有, 只能在自己類別內呼叫
-    // 驗證付款金額
+    // 1.驗證付款金額
     private String validateAmount(int amount) {
         if (amount <= 0) {
             return "付款金額必須大於0";
@@ -55,7 +56,7 @@ public abstract class APayment {
         }
     }
 
-    // 計算手續費
+    // 2.計算手續費
     private int calculateFee(int amount) {
         // 轉型介紹
         // String to int
@@ -68,10 +69,10 @@ public abstract class APayment {
 
     }
 
-    // 定義一個抽象方法為付款的流程:串接金流
+    // 3.定義一個抽象方法為付款的流程:串接金流
     public abstract void processPayment(int amount, int fee);
 
-    // 印出明細
+    // 4.印出明細
     private void printPaymentResult(int amount, double fee) {
         System.out.println("付款金額: " + amount);
         System.out.println("手續費: " + fee);

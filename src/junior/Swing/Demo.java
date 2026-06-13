@@ -27,7 +27,6 @@ public class Demo {
             count[0]++;
             label.setText("點擊次數：" + count[0]);
         });
-
         // 4. 配置版面
         // frame是最底層, 倒數第二層是 panel, 最上層就是 label, button
         JPanel panel = new JPanel();
