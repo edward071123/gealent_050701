@@ -49,6 +49,12 @@ public class Demo {
         // 範例互動網站:
         // https://edward071123.github.io/gealent_050701/src/junior/abstractAndInterface2/object-call-visualizer.html
 
+        // 如果上面都練習後已經清楚整個流程的呼叫可多練習以下問題
+        // 在interfaceExample內修改 ICreditCard & ILinePay的內容
+        // 增加各自的驗證跟手續費計算方法
+        // 最後印出明細的內容
+        // 在pay()內呼叫
+
         // 使用LinePay付款(ALinePay) 物件(object)先比喻成模組(module)
         ALinePay linePayPayment = new ALinePay();
         // new 就是類別(class)已經被生產出來 變成物件(object)
