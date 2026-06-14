@@ -1,8 +1,8 @@
-package junior;
+package junior.methodInfo;
 
 import java.util.Arrays;
 
-public class MethodPlus {
+public class Plus {
     public static void main(String[] args) {
         // 做一個印出金字塔的方法 我要可以輸入金字塔的層數
         // printPyramid(5);

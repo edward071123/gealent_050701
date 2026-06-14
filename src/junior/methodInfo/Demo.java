@@ -1,6 +1,6 @@
-package junior;
+package junior.methodInfo;
 
-public class MethodInfo {
+public class Demo {
     public static void main(String[] args) {
 
         for (int i = 0; i < 5; i++) {
