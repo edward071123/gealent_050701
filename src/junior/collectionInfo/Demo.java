@@ -26,6 +26,14 @@ public class Demo {
          * 1. 購物車商品，商品可能重複。
          * 2. 學生點名名單，需要保留順序。
          * 3. 播放清單，需要按照加入順序播放。
+         * 
+         * 常用方法：
+         * add() 新增資料
+         * get() 依照索引取得資料
+         * set() 修改資料
+         * remove() 刪除資料
+         * size() 取得資料筆數
+         * clear() 清空資料
          */
 
         // List<String> fruits = new ArrayList<String>();
@@ -78,6 +86,13 @@ public class Demo {
          * 1. 會員帳號，每個帳號不能重複。
          * 2. 商品標籤，不需要出現相同標籤。
          * 3. 活動簽到名單，同一個人只能簽到一次。
+         * 
+         * 常用方法：
+         * add() 新增資料
+         * contains() 判斷是否包含資料
+         * remove() 刪除資料
+         * size() 取得資料筆數
+         * clear() 清空資料
          */
         // Set<String> studentNames = new HashSet<String>();
         Set<String> studentNames = new HashSet<>();
@@ -116,6 +131,14 @@ public class Demo {
          * 2. 商品編號對應商品名稱。
          * 3. 國家代碼對應國家名稱。
          *
+         * 常用方法：
+         * put() 新增或修改資料
+         * get() 透過 key 取得 value
+         * remove() 透過 key 刪除資料
+         * containsKey() 判斷是否包含 key
+         * keySet() 取得所有 key
+         * size() 取得資料筆數
+         * clear() 清空資料
          */
         // Map<String, String> students = new HashMap<String, String>();
         Map<String, String> students = new HashMap<>();
