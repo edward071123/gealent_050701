@@ -4,21 +4,21 @@ public class Demo {
     public static void main(String[] args) {
         // 實體化物件 - 透過類別來創造一個物件
         // class -> object
-        // Car car1 = new Car();
+        CarI car1 = new CarI();
 
         // System.out.println("車子的品牌(還未寫入): " + car1.brand);
         // // 寫入物件的屬性
-        // car1.brand = "Toyota";
-        // car1.color = "Red";
-        // car1.year = 2020;
-        // car1.numberPlate = "ABC-1234";
+        car1.brand = "Toyota";
+        car1.color = "Red";
+        car1.year = 2020;
+        car1.numberPlate = "ABC-1234";
 
         // // 讀取物件的屬性
-        // System.out.println("車子的品牌(已經寫入): " + car1.brand);
+        System.out.println("車子的品牌(已經寫入): " + car1.brand);
 
         // // 呼叫(調用)物件的方法
-        // car1.start();
-        // car1.stop();
+        car1.start();
+        car1.stop();
 
         // // 課堂練習1 - 建立一個類別 Area 用來計算面積
         // // 屬性: int length, int width
@@ -37,9 +37,9 @@ public class Demo {
         // System.out.println("長方形的面積為: " + areaResult2);
 
         // // 建構子使用
-        // Car1 car11 = new Car1("BMW", "Blue");
-        // System.out.println("車子的品牌: " + car11.brand);
-        // System.out.println("車子的顏色: " + car11.color);
+        CarII car11 = new CarII("BMW", "Blue");
+        System.out.println("車子的品牌: " + car11.brand);
+        System.out.println("車子的顏色: " + car11.color);
 
         // // 課堂練習2 - 改寫Area類別, 加入建構子來初始化length和width, 並且實體化物件來測試建構子的功能
         // Area area1 = new Area(5, 3);
