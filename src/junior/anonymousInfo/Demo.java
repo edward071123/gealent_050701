@@ -12,6 +12,8 @@ public class Demo {
 
         System.out.println("===============匿名類別寫法===============");
         // 2. 匿名類別寫法: 懶得另外建立一個類別
+        // 通常一次性 不重複使用
+        // 通常用作interface獨立實作
         Animal dog2 = new Animal() {
             @Override
             public void speak() {

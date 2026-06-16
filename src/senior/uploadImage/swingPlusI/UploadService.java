@@ -1,4 +1,4 @@
-package senior.uploadImage.swing;
+package senior.uploadImage.swingPlusI;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,7 +43,7 @@ public class UploadService {
     }
 
     // 把使用者選擇的圖片複製到 uploads 資料夾。
-    public File upload(File sourceFile) throws Exception {
+    public File upload(File sourceFile, IUploadProgress uploadProgress) throws Exception {
         /*
          * 上傳邏輯放在這個類別，而不是放在 Frame：
          *
@@ -59,6 +59,8 @@ public class UploadService {
 
         // 每次讀取 4096 bytes，不要一次把整張圖片全部讀進記憶體。
         byte[] buffer = new byte[4096];
+        long totalSize = sourceFile.length();
+        long copiedSize = 0;
 
         FileInputStream fis = null;
         FileOutputStream fos = null;
@@ -78,6 +80,15 @@ public class UploadService {
             while ((len = fis.read(buffer)) != -1) {
                 // 只寫入本次實際讀到的長度 len。
                 fos.write(buffer, 0, len);
+
+                copiedSize += len;
+
+                // 計算目前上傳百分比，交給 Frame 更新進度條。
+                int progress = (int) ((copiedSize * 100) / totalSize);
+                uploadProgress.onProgress(progress);
+
+                // 教學用：稍微放慢一點，方便看到 loading 過程。
+                Thread.sleep(10);
             }
 
         } catch (Exception e) {

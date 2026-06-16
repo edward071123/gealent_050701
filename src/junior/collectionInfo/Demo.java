@@ -206,5 +206,147 @@ public class Demo {
             System.out.println("學號：" + studentId);
             System.out.println("姓名：" + students.get(studentId));
         }
+
+        // ==================== 5. 自建泛型 class ====================
+        /*
+         * 前面看到的 List<String>、Set<String>、Map<String, String>
+         * 都是 Java 幫我們寫好的泛型類別。
+         *
+         * 其實我們也可以自己寫泛型類別。
+         *
+         * 泛型類別的寫法：
+         *
+         * class Box<T> {
+         *     private T value;
+         * }
+         *
+         * T 不是固定型別。
+         * T 是一個「型別佔位符」。
+         *
+         * 當你寫：
+         * Box<String> stringBox
+         *
+         * T 就會變成 String。
+         *
+         * 當你寫：
+         * Box<Integer> integerBox
+         *
+         * T 就會變成 Integer。
+         *
+         * 常見泛型命名：
+         * T：Type，普通型別
+         * E：Element，集合元素
+         * K：Key，Map 的 key
+         * V：Value，Map 的 value
+         */
+        System.out.println("================ 自建泛型 class：Box<T> ================");
+
+        Box<String> stringBox = new Box<>();
+        stringBox.setValue("這是一段文字");
+
+        String boxText = stringBox.getValue();
+        System.out.println("String Box：" + boxText);
+
+        Box<Integer> integerBox = new Box<>();
+        integerBox.setValue(100);
+
+        Integer boxNumber = integerBox.getValue();
+        System.out.println("Integer Box：" + boxNumber);
+
+        /*
+         * 因為 stringBox 是 Box<String>，
+         * 所以只能放 String。
+         *
+         * 下面這行如果打開會編譯錯誤：
+         */
+        // stringBox.setValue(123);
+
+        /*
+         * 因為 integerBox 是 Box<Integer>，
+         * 所以只能放 Integer。
+         *
+         * 下面這行如果打開會編譯錯誤：
+         */
+        // integerBox.setValue("abc");
+
+        // ==================== 6. 自建多個泛型參數 ====================
+        /*
+         * 泛型也可以一次使用多個型別參數。
+         *
+         * Pair<K, V>
+         *
+         * K 代表 key 的型別。
+         * V 代表 value 的型別。
+         *
+         * 這個概念很像 Map<K, V>。
+         */
+        System.out.println("================ 自建泛型 class：Pair<K, V> ================");
+
+        Pair<String, Integer> score = new Pair<>("Tom", 90);
+
+        String scoreName = score.getKey();
+        Integer scoreValue = score.getValue();
+
+        System.out.println("學生：" + scoreName);
+        System.out.println("分數：" + scoreValue);
+
+        Pair<Integer, String> product = new Pair<>(1001, "鍵盤");
+
+        Integer productId = product.getKey();
+        String productName = product.getValue();
+
+        System.out.println("商品編號：" + productId);
+        System.out.println("商品名稱：" + productName);
+    }
+
+}
+
+/*
+* 自建泛型類別 Box<T>
+*
+* T 是型別佔位符。
+* 真正使用 Box 時，才決定 T 是什麼型別。
+*
+* Box<String>  裡面的 T 就是 String。
+* Box<Integer> 裡面的 T 就是 Integer。
+*/
+class Box<T> {
+    private T value;
+
+    public void setValue(T value) {
+        this.value = value;
+    }
+
+    public T getValue() {
+        return value;
+    }
+}
+
+/*
+* 自建泛型類別 Pair<K, V>
+*
+* K 代表 key 的型別。
+* V 代表 value 的型別。
+*
+* 例如：
+* Pair<String, Integer>
+* K = String
+* V = Integer
+*/
+class Pair<K, V> {
+    private K key;
+    private V value;
+
+    public Pair(K key, V value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public K getKey() {
+        return key;
+    }
+
+    public V getValue() {
+        return value;
     }
 }
