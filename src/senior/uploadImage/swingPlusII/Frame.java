@@ -88,7 +88,7 @@ public class Frame extends JFrame {
         // setSize：視窗寬高。
         // setDefaultCloseOperation：按關閉按鈕時結束程式。
         // setLocationRelativeTo(null)：讓視窗出現在螢幕中央。
-        setTitle("圖片上傳與瀏覽 - 多檔排隊版");
+        setTitle("圖片上傳與瀏覽 - swingPlusII - 多檔排隊版");
         setSize(950, 650);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
