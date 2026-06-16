@@ -1,4 +1,4 @@
-package senior.uploadImage.swingPlusII;
+package senior.uploadImage.swingPlusIII;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -6,6 +6,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Frame extends JFrame {
 
@@ -31,8 +32,9 @@ public class Frame extends JFrame {
     private JButton uploadButton = new JButton("上傳圖片");
     private JButton refreshButton = new JButton("重新整理");
 
-    // JProgressBar：顯示上傳進度，0 到 100 代表百分比。
-    private JProgressBar progressBar = new JProgressBar(0, 100);
+    // uploadProgressPanel：放多條進度條。
+    // 多執行緒版會同時上傳多張圖片，所以不能只用一條 JProgressBar。
+    private JPanel uploadProgressPanel = new JPanel();
 
     // DefaultListModel：清單資料來源，負責保存要顯示的 File。
     // JList：真正畫在畫面上的清單元件。
@@ -72,13 +74,18 @@ public class Frame extends JFrame {
          * | | - d2.jpg           | | |                                      | |
          * | +--------------------+ | +--------------------------------------+ |
          * +------------------------+------------------------------------------+
-         * | progressBar                                                       |
-         * | [ 0% ----------------------------------------------------- 100% ] |
+         * | progressScrollPane                                                |
+         * | uploadProgressPanel                                               |
+         * | +---------------------------------------------------------------+ |
+         * | | 第 1/3 張 d1.jpg 40%                                          | |
+         * | | 第 2/3 張 d2.jpg 75%                                          | |
+         * | | 第 3/3 張 d3.jpg 10%                                          | |
+         * | +---------------------------------------------------------------+ |
          * +-------------------------------------------------------------------+
          *
          * BorderLayout.NORTH  ：上方工具列 topPanel
          * BorderLayout.CENTER ：中間左右分割 splitPane
-         * BorderLayout.SOUTH  ：下方進度條 progressBar
+         * BorderLayout.SOUTH  ：下方多進度條區塊 uploadProgressPanel
          * splitPane 左邊      ：圖片清單 imageList
          * splitPane 右邊      ：圖片預覽 imageLabel
          */
@@ -88,16 +95,15 @@ public class Frame extends JFrame {
         // setSize：視窗寬高。
         // setDefaultCloseOperation：按關閉按鈕時結束程式。
         // setLocationRelativeTo(null)：讓視窗出現在螢幕中央。
-        setTitle("圖片上傳與瀏覽 - 多檔排隊版");
+        setTitle("圖片上傳與瀏覽 - 多執行緒版");
         setSize(950, 650);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // 進度條設定。
-        // setStringPainted(true)：讓進度條顯示 0%、50%、100% 這種文字。
-        progressBar.setStringPainted(true);
-        progressBar.setValue(0);
-        progressBar.setString("0%");
+        // 多進度條區塊設定。
+        // BoxLayout.Y_AXIS 代表元件會從上到下垂直排列。
+        uploadProgressPanel.setLayout(new BoxLayout(uploadProgressPanel, BoxLayout.Y_AXIS));
+        uploadProgressPanel.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
 
         // 按鈕事件。
         // addActionListener：設定按鈕被點擊後要執行什麼方法。
@@ -193,11 +199,15 @@ public class Frame extends JFrame {
         // 設定左右分割線的位置。
         splitPane.setDividerLocation(360);
 
+        // 下方進度條區塊可能有多條進度列，所以放進 JScrollPane。
+        JScrollPane progressScrollPane = new JScrollPane(uploadProgressPanel);
+        progressScrollPane.setPreferredSize(new Dimension(0, 150));
+
         // JFrame 預設就是 BorderLayout。
-        // NORTH 放上方工具列，CENTER 放主要內容，SOUTH 放進度條。
+        // NORTH 放上方工具列，CENTER 放主要內容，SOUTH 放多進度條區塊。
         add(topPanel, BorderLayout.NORTH);
         add(splitPane, BorderLayout.CENTER);
-        add(progressBar, BorderLayout.SOUTH);
+        add(progressScrollPane, BorderLayout.SOUTH);
 
         // 開啟視窗時先讀取 uploads 裡已經存在的圖片。
         loadUploadImages();
@@ -207,22 +217,16 @@ public class Frame extends JFrame {
 
     private void uploadImage() {
         /*
-         * 多張圖片上傳流程：
+         * 多執行緒上傳流程：
          * 1. 開啟 JFileChooser 讓使用者選圖片。
          * 2. 允許使用者一次選多張圖片。
          * 3. 檢查選擇數量，最多只能 5 張。
          * 4. 逐張檢查副檔名是不是 jpg/jpeg/png/gif。
-         * 5. 使用 for 迴圈一張一張上傳。
-         * 6. 每一張上傳時，progressBar 顯示「目前這張」的進度。
-         * 7. 全部上傳完成後，重新整理左側清單。
-         *
-         * 注意：
-         * 這個版本故意不使用 SwingWorker，也沒有多執行緒。
-         * 所以檔案會照順序排隊：
-         * 第 1 張完成後，才會開始第 2 張。
-         *
-         * 如果圖片很大，畫面可能暫時不能操作。
-         * 這是為了讓初學者先看懂「排隊上傳」的流程。
+         * 5. 每一張圖片建立一條 JProgressBar。
+         * 6. 每一張圖片建立一個 Thread。
+         * 7. 多個 Thread 同時執行，所以多張圖片會同時上傳。
+         * 8. 每個 Thread 更新自己對應的進度條。
+         * 9. 每完成一張，就馬上加入左側清單。
          */
 
         // 讓使用者選擇圖片檔。
@@ -277,9 +281,7 @@ public class Frame extends JFrame {
             }
 
             // 先更新畫面狀態，讓使用者知道程式開始處理。
-            setStatusText("準備上傳 " + sourceFiles.length + " 張圖片", null);
-            progressBar.setValue(0);
-            progressBar.setString("0%");
+            setStatusText("開始多執行緒上傳 " + sourceFiles.length + " 張圖片", null);
             uploadButton.setEnabled(false);
             refreshButton.setEnabled(false);
 
@@ -292,105 +294,183 @@ public class Frame extends JFrame {
              * 等全部圖片上傳完成後，
              * 再用「結束時間 - 開始時間」算出總共花幾秒。
              */
-            long startTime = System.currentTimeMillis();
+            final long startTime = System.currentTimeMillis();
 
-            File lastUploadedFile = null;
+            // 清空上一批上傳留下來的進度條。
+            uploadProgressPanel.removeAll();
+            uploadProgressPanel.revalidate();
+            uploadProgressPanel.repaint();
 
-            try {
-                // 使用一般 for 迴圈逐張上傳。
-                // i 從 0 開始，所以顯示第幾張時要用 i + 1。
-                for (int i = 0; i < sourceFiles.length; i++) {
-                    File sourceFile = sourceFiles[i];
-                    /*
-                     * currentNumber 是目前第幾張。
-                     *
-                     * 下面的匿名類別 IUploadProgress 也會用到這個數字。
-                     * 寫成 final 可以讓初學者清楚知道：
-                     * 這一輪迴圈裡，currentNumber 的值不會再被改掉。
-                     */
-                    final int currentNumber = i + 1;
-                    final int totalCount = sourceFiles.length;
+            /*
+             * AtomicInteger 是可以安全用在多執行緒中的整數。
+             *
+             * 多張圖片會同時上傳，所以多個 Thread 都可能同時完成。
+             * completedCount 用來記錄目前已經完成幾張。
+             */
+            AtomicInteger completedCount = new AtomicInteger(0);
+            final int totalCount = sourceFiles.length;
 
-                    setStatusText(
-                            "上傳中 " + currentNumber + " / " + totalCount,
-                            sourceFile
-                    );
-                    setUploadProgressText(currentNumber, totalCount, 0);
-                    repaintUploadStatusNow();
+            // for 迴圈只負責建立進度條和啟動 Thread。
+            // 真正複製檔案的工作，會在各自的 Thread 裡執行。
+            for (int i = 0; i < sourceFiles.length; i++) {
+                final File sourceFile = sourceFiles[i];
+                final int currentNumber = i + 1;
 
-                    /*
-                     * 建立一個 IUploadProgress 物件。
-                     *
-                     * IUploadProgress 是一個介面。
-                     * 介面本身不能直接 new，所以這裡用匿名類別實作它。
-                     *
-                     * UploadService 複製檔案時，會呼叫 onProgress(progress)。
-                     * 這裡收到 progress 後，直接更新 progressBar。
-                     *
-                     * 這個版本沒有 SwingWorker，
-                     * 所以這段程式會照順序執行，不會同時上傳多張。
-                     */
-                    IUploadProgress uploadProgress = new IUploadProgress() {
-                        @Override
-                        public void onProgress(int progress) {
-                            setUploadProgressText(currentNumber, totalCount, progress);
-
-                            /*
-                             * 因為這個版本沒有使用 SwingWorker，
-                             * for 迴圈和檔案複製都在目前的畫面事件中執行。
-                             *
-                             * 一般情況下，Swing 會等事件結束後才重畫畫面。
-                             * 但這裡為了教學，要讓學生看到進度變化，
-                             * 所以每次進度改變後，主動要求進度條立刻重畫。
-                             */
-                            repaintUploadStatusNow();
-                        }
-                    };
-
-                    // 呼叫 UploadService，真正的檔案複製邏輯放在另一個類別。
-                    lastUploadedFile = uploadService.upload(sourceFile, uploadProgress);
-
-                    // 只要有一張上傳完成，就馬上更新左側清單。
-                    // 這樣使用者不用等全部圖片上傳完，才看到清單變化。
-                    addUploadedFileToList(lastUploadedFile);
-                }
-
-                progressBar.setValue(100);
-                progressBar.setString("全部完成 100%");
-
-                // 檔案已經複製到 uploads，所以重新讀取 uploads 清單。
-                loadUploadImages();
-
-                // 右側顯示最後一張上傳完成的圖片。
-                if (lastUploadedFile != null) {
-                    long endTime = System.currentTimeMillis();
-                    long elapsedTime = endTime - startTime;
-                    double elapsedSeconds = elapsedTime / 1000.0;
-
-                    showImage(lastUploadedFile);
-
-                    // 左側清單選中最後一張上傳完成的圖片。
-                    imageList.setSelectedValue(lastUploadedFile, true);
-                    setStatusText(
-                            "全部上傳成功，共 " + sourceFiles.length + " 張 ("
-                                    + String.format("%.1f", elapsedSeconds)
-                                    + " 秒)",
-                            lastUploadedFile
-                    );
-                }
-
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(
-                    Frame.this,
-                    "上傳失敗：" + ex.getMessage()
+                // 每張圖片建立自己的進度條。
+                final JProgressBar fileProgressBar = createFileProgressBar(
+                        sourceFile,
+                        currentNumber,
+                        totalCount
                 );
 
-                setStatusText("上傳失敗", null);
+                uploadProgressPanel.add(fileProgressBar);
+                uploadProgressPanel.revalidate();
+                uploadProgressPanel.repaint();
 
-            } finally {
-                uploadButton.setEnabled(true);
-                refreshButton.setEnabled(true);
+                /*
+                 * Thread 是 Java 的執行緒類別。
+                 *
+                 * new Thread(...) 代表建立一個新的背景工作。
+                 * start() 代表讓這個背景工作開始執行。
+                 *
+                 * 每張圖片都有自己的 Thread，
+                 * 所以 3 張圖片就會有 3 個 Thread 同時上傳。
+                 */
+                Thread uploadThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        uploadOneFileInThread(
+                                sourceFile,
+                                fileProgressBar,
+                                currentNumber,
+                                totalCount,
+                                completedCount,
+                                startTime
+                        );
+                    }
+                });
+
+                uploadThread.start();
             }
+        }
+    }
+
+    // 建立單一檔案專用的進度條。
+    private JProgressBar createFileProgressBar(File sourceFile, int currentNumber, int totalCount) {
+        JProgressBar fileProgressBar = new JProgressBar(0, 100);
+
+        // setStringPainted(true)：讓進度條中間可以顯示文字。
+        fileProgressBar.setStringPainted(true);
+        fileProgressBar.setValue(0);
+        setFileProgressText(fileProgressBar, currentNumber, totalCount, 0);
+
+        // tooltip 顯示完整檔名，避免進度條文字太長。
+        fileProgressBar.setToolTipText(sourceFile.getName());
+
+        // 每條進度條固定高度，畫面比較整齊。
+        fileProgressBar.setPreferredSize(new Dimension(0, 28));
+        fileProgressBar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 28));
+
+        return fileProgressBar;
+    }
+
+    // 這個方法會在背景 Thread 裡執行，負責上傳單一檔案。
+    private void uploadOneFileInThread(
+            final File sourceFile,
+            final JProgressBar fileProgressBar,
+            final int currentNumber,
+            final int totalCount,
+            final AtomicInteger finishedCount,
+            final long startTime
+    ) {
+        try {
+            /*
+             * 建立一個 IUploadProgress 物件。
+             *
+             * UploadService 複製檔案時，會一直呼叫 onProgress(progress)。
+             *
+             * 注意：
+             * onProgress 是在背景 Thread 裡被呼叫。
+             * Swing 畫面元件不能直接在背景 Thread 裡更新。
+             *
+             * 所以這裡用 SwingUtilities.invokeLater，
+             * 把「更新進度條」這件事丟回 Swing 事件執行緒執行。
+             */
+            IUploadProgress uploadProgress = new IUploadProgress() {
+                @Override
+                public void onProgress(final int progress) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            setFileProgressText(
+                                    fileProgressBar,
+                                    currentNumber,
+                                    totalCount,
+                                    progress
+                            );
+                        }
+                    });
+                }
+            };
+
+            // 真正的檔案複製由 UploadService 負責。
+            final File targetFile = uploadService.upload(sourceFile, uploadProgress);
+
+            // 上傳完成後，回到 Swing 事件執行緒更新清單和預覽。
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    setFileProgressText(fileProgressBar, currentNumber, totalCount, 100);
+                    addUploadedFileToList(targetFile);
+                    showImage(targetFile);
+                    imageList.setSelectedValue(targetFile, true);
+                    finishOneThread(finishedCount, totalCount, targetFile, startTime);
+                }
+            });
+
+        } catch (final Exception ex) {
+            // 發生錯誤時，也要回到 Swing 事件執行緒顯示訊息。
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    fileProgressBar.setString("第 " + currentNumber + "/" + totalCount + " 張失敗");
+
+                    JOptionPane.showMessageDialog(
+                            Frame.this,
+                            "上傳失敗：" + sourceFile.getName() + "\n" + ex.getMessage()
+                    );
+
+                    finishOneThread(finishedCount, totalCount, null, startTime);
+                }
+            });
+        }
+    }
+
+    // 每完成一個 Thread，就統計目前完成數量。
+    private void finishOneThread(
+            AtomicInteger finishedCount,
+            int totalCount,
+            File lastFile,
+            long startTime
+    ) {
+        int finished = finishedCount.incrementAndGet();
+
+        setStatusText("已完成 " + finished + " / " + totalCount, lastFile);
+
+        // 全部 Thread 都結束後，才把按鈕打開。
+        if (finished == totalCount) {
+            long endTime = System.currentTimeMillis();
+            long elapsedTime = endTime - startTime;
+            double elapsedSeconds = elapsedTime / 1000.0;
+
+            uploadButton.setEnabled(true);
+            refreshButton.setEnabled(true);
+            setStatusText(
+                    "全部上傳完成，共 " + totalCount + " 張 ("
+                            + String.format("%.1f", elapsedSeconds)
+                            + " 秒)",
+                    lastFile
+            );
         }
     }
 
@@ -458,10 +538,8 @@ public class Frame extends JFrame {
         // 讓剛加入的檔案捲到可見範圍。
         imageList.ensureIndexIsVisible(imageListModel.size() - 1);
 
-        // 這個版本沒有使用 SwingWorker，
-        // 所以上傳中的 for 迴圈會暫時佔住 Swing 畫面事件。
-        // 如果不主動重畫，清單可能要等全部上傳完才看得到新資料。
-        repaintImageListNow();
+        // 多執行緒版會用 SwingUtilities.invokeLater 回到畫面執行緒，
+        // 所以資料加入 model 後，JList 可以正常刷新。
     }
 
     private void showImage(File file) {
@@ -521,57 +599,21 @@ public class Frame extends JFrame {
         imageLabel.setIcon(new ImageIcon(image));
     }
 
-    // 同步上傳時，主動要求狀態文字和進度條立刻重畫。
-    private void repaintUploadStatusNow() {
+    // 統一設定單一進度條文字，避免不同地方各自組字串造成顯示不一致。
+    private void setFileProgressText(
+            JProgressBar fileProgressBar,
+            int currentNumber,
+            int totalCount,
+            int progress
+    ) {
         /*
-         * paintImmediately 是「馬上重畫」的意思。
-         *
-         * 這個範例沒有使用 SwingWorker，
-         * 所以上傳檔案時，畫面事件會被目前的 for 迴圈佔住。
-         *
-         * 如果只寫 repaint()，Swing 可能會等上傳全部結束後才重畫。
-         * 這裡改用 paintImmediately()，
-         * 是為了讓學生看得到一張一張排隊上傳的進度變化。
-         */
-        statusLabel.paintImmediately(statusLabel.getVisibleRect());
-        fileSizeLabel.paintImmediately(fileSizeLabel.getVisibleRect());
-        progressBar.paintImmediately(progressBar.getVisibleRect());
-    }
-
-    // 同步上傳時，主動要求左側清單立刻重畫。
-    private void repaintImageListNow() {
-        /*
-         * imageListModel.addElement(uploadedFile)
-         * 只代表「資料已經加入清單模型」。
-         *
-         * 但是畫面什麼時候重畫，是 Swing 事件執行緒負責。
-         *
-         * 這個範例故意不用 SwingWorker，
-         * 所以上傳流程還沒結束時，Swing 可能還沒空更新 JList 畫面。
-         *
-         * 因此每完成一張圖片後，
-         * 我們手動要求 imageList 和它外層的 viewport 立刻重畫，
-         * 讓學生可以看到「完成一張，左側清單馬上多一筆」。
-         */
-        imageList.revalidate();
-        imageList.paintImmediately(imageList.getVisibleRect());
-
-        if (imageList.getParent() instanceof JViewport) {
-            JViewport viewport = (JViewport) imageList.getParent();
-            viewport.paintImmediately(viewport.getVisibleRect());
-        }
-    }
-
-    // 統一設定進度條文字，避免不同地方各自組字串造成顯示不一致。
-    private void setUploadProgressText(int currentNumber, int totalCount, int progress) {
-        /*
-         * progressBar.setValue(progress)
+         * fileProgressBar.setValue(progress)
          * 設定進度條填滿的比例，progress 通常是 0 到 100。
          */
-        progressBar.setValue(progress);
+        fileProgressBar.setValue(progress);
 
         /*
-         * progressBar.setString(...)
+         * fileProgressBar.setString(...)
          * 設定進度條中間顯示的文字。
          *
          * 原本寫成「第 1 張：30%」比較長，
@@ -584,7 +626,7 @@ public class Frame extends JFrame {
          * totalCount   ：這次總共選了幾張
          * progress     ：目前這張的上傳百分比
          */
-        progressBar.setString(
+        fileProgressBar.setString(
                 "第 " + currentNumber + "/" + totalCount + " 張 " + progress + "%"
         );
     }
