@@ -1,8 +1,10 @@
 package junior.collectionInfo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Demo {
@@ -97,6 +99,47 @@ public class Demo {
         System.out.println("Set全部: " + studentNames);
         System.out.println("Set 目前長度: " + studentNames.size());
         System.out.println("Set 是否有小明： " + studentNames.contains("小明"));
+
+        // ==================== 3. Map ====================
+        /*
+         * Map 使用 key 和 value 保存資料。
+         * 可以透過 key 快速取得對應的 value。
+         *
+         * Map<String, String>：
+         * 第一個 String 是 key 的型別。
+         * 第二個 String 是 value 的型別。
+         *
+         * key 不可以重複，使用相同 key 會更新原本的 value。
+         *
+         * 可能的使用情境：
+         * 1. 學號對應學生姓名。
+         * 2. 商品編號對應商品名稱。
+         * 3. 國家代碼對應國家名稱。
+         *
+         */
+        // Map<String, String> students = new HashMap<String, String>();
+        Map<String, String> students = new HashMap<>();
+
+        students.put("S001", "小明");
+        students.put("S002", "小華");
+        students.put("S003", "小明");
+        students.put("S001", "小明1"); // 因為key重複 所以此行不會新增
+
+        System.out.println("================ Map ================");
+        System.out.println("students: " + students);
+
+        // 用key 取得 value => 用學號 取得 學生姓名
+        System.out.println("S001的學生: " + students.get("S001"));
+        System.out.println("S002的學生: " + students.get("S002"));
+
+        System.out.println("students的key(學號)集合: " + students.keySet());
+        students.remove("S002");
+
+        for (String studentId : students.keySet()) {
+            System.out.println("key: " + studentId);
+            // 用key 取得 value
+            System.out.println("value: " + students.get(studentId));
+        }
 
     }
 }
