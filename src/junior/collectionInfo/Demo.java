@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.Box;
-
 public class Demo {
     public static void main(String[] args) {
         /*
@@ -244,6 +242,27 @@ public class Demo {
         box3.setValue(true);
         System.out.println("Boolean Box：" + box3.getValue());
 
+        // ==================== 6. 自建多個泛型參數 class====================
+        /*
+         * 泛型也可以一次使用多個型別參數。
+         *
+         * Pair<K, V>
+         *
+         * K 代表 key 的型別。
+         * V 代表 value 的型別。
+         *
+         * 這個概念很像 Map<K, V>。
+         */
+        System.out.println("================ 自建泛型 class：Pair<K, V> ================");
+        Pair<String, Integer> pair1 = new Pair<>();
+        pair1.setKey("S001");
+        pair1.setValue(100);
+        System.out.println("學生：" + pair1.getKey() + " 分數：" + pair1.getValue());
+
+        Pair<String, String> pair2 = new Pair<>();
+        pair2.setKey("S001");
+        pair2.setValue("小明");
+        System.out.println("學號：" + pair2.getKey() + " 姓名：" + pair2.getValue());
     }
 }
 
@@ -260,6 +279,33 @@ class Box<T> {
     }
 
     public T getValue() {
+        return this.value;
+    }
+}
+
+// 自建泛型類別 Pair<K, V>
+// K 代表 key 的型別。
+// V 代表 value 的型別。
+// Pair<String, Integer> K = String, V = Integer
+// Pair<Integer, Integer> K = Integer, V = Integer
+// Pair<String, String> K = String, V = String
+class Pair<K, V> {
+    private K key;
+    private V value;
+
+    public void setKey(K key) {
+        this.key = key;
+    }
+
+    public void setValue(V value) {
+        this.value = value;
+    }
+
+    public K getKey() {
+        return this.key;
+    }
+
+    public V getValue() {
         return this.value;
     }
 }
