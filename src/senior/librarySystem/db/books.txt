@@ -1,3 +1,0 @@
-P,Java入門,張三,true,Java
-P,Python程式設計,王五,false,Python
-N,哈利波特,J.K.Rowling,true,奇幻
