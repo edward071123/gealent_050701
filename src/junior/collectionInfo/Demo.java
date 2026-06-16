@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.Box;
+
 public class Demo {
     public static void main(String[] args) {
         /*
@@ -228,5 +230,36 @@ public class Demo {
         numbers.add(300);
         System.out.println("List-numbers: " + numbers);
 
+        // ==================== 5. 自建泛型 class ====================
+        System.out.println("================ 自建泛型 class：Box<T> ================");
+        Box<String> box1 = new Box<>();
+        box1.setValue("apple");
+        System.out.println("String Box：" + box1.getValue());
+
+        Box<Integer> box2 = new Box<>();
+        box2.setValue(100);
+        System.out.println("Integer Box：" + box2.getValue());
+
+        Box<Boolean> box3 = new Box<>();
+        box3.setValue(true);
+        System.out.println("Boolean Box：" + box3.getValue());
+
+    }
+}
+
+// 自建泛型 class
+// <Ｔ> 表示傳入的型別為任意型別
+// Box<String> 裡面的 T 就是 String。
+// Box<Integer> 裡面的 T 就是 Integer。
+// Box<Boolean> 裡面的 T 就是 Boolean。
+class Box<T> {
+    private T value;
+
+    public void setValue(T value) {
+        this.value = value;
+    }
+
+    public T getValue() {
+        return this.value;
     }
 }
