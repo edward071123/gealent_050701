@@ -164,5 +164,69 @@ public class Demo {
             System.out.println("value: " + students.get(studentId));
         }
 
+        System.out.println("================ Generic ================");
+        // ==================== 4. 泛型 Generic ====================
+        /*
+         * 沒有使用泛型時，可以直接寫：
+         * List list = new ArrayList();
+         *
+         * 因為沒有指定型別，所以集合裡什麼資料都能放。
+         * 但是取出資料時，Java 只知道它是 Object。
+         * 要使用原本的型別，就必須自己進行強制轉型。
+         */
+
+        // 比對使用泛型的寫法
+        // List<String> list = new ArrayList<>();
+
+        List list = new ArrayList();
+        list.add("apple");
+        list.add(100);
+        list.add(true);
+
+        System.out.println(list);
+
+        // 要使用原本型別，必須自己強制轉型。
+        String fruit = (String) list.get(0);
+
+        Integer number = (Integer) list.get(1); // 正確的轉型接回值
+        // String number = (String) list.get(1); // 錯誤的轉型接回值
+
+        Boolean flag = (Boolean) list.get(2);
+        System.out.println("================ 未使用泛型 ================");
+        System.out.println("fruit: " + fruit);
+        System.out.println("number: " + number);
+        System.out.println("flag: " + flag);
+
+        /*
+         * 為了解決混合型別與強制轉型問題，可以使用泛型。
+         * List<String> list = new ArrayList<>();
+         * <String> 這個就是泛型
+         * 強制定義此List 只能保存String
+         * 
+         * List<String> 只能保存字串。
+         * List<Integer> 只能保存整數。
+         * List<Boolean> 只能保存布林值。
+         * 
+         * 泛型的好處：
+         * 1. 編譯時就能阻止錯誤型別加入集合。
+         * 2. 取出資料時不需要強制轉型。
+         * 
+         * 泛型不能直接使用基本型別：
+         * 錯誤：List<int>
+         * 正確：List<Integer>
+         * 
+         * 常用基本型別對應：
+         * int -> Integer
+         * double -> Double
+         * boolean -> Boolean
+         * char -> Character
+         */
+        System.out.println("================ 使用泛型 ================");
+        List<Integer> numbers = new ArrayList<>();
+        numbers.add(100);
+        numbers.add(200);
+        numbers.add(300);
+        System.out.println("List-numbers: " + numbers);
+
     }
 }
