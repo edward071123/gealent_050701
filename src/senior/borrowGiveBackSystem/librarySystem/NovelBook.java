@@ -18,4 +18,11 @@ public class NovelBook extends Book {
     public String getExtraInfo() {
         return this.category;
     }
+
+    @Override
+    public String getInfo() {
+        return super.getInfo() + "\n"
+                + "類型：小說\n"
+                + "分類：" + getExtraInfo();
+    }
 }

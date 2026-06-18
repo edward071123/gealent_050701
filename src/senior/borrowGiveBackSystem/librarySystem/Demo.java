@@ -45,50 +45,71 @@ public class Demo {
         // 覆寫 getType() 方法 => 回傳N
         // 建立建構子傳入以上屬性的資料進來
         //
-
-        // boolean working = true; // true 可以一直在系統內運行, false 代表離開系統
-
-        // Scanner sc = new Scanner(System.in);
-
-        // while (working == true) {
-        // System.out.println("===== 校園圖書館系統 =====");
-        // System.out.println("1. 查看所有書籍");
-        // System.out.println("2. 借書");
-        // System.out.println("3. 還書");
-        // System.out.println("0. 離開");
-        // System.out.print("請輸入操作數字：");
-
-        // String choice = sc.nextLine();
-
-        // if (choice.equals("1")) {
-        // System.out.println("===== 查看所有書籍 =====");
-
-        // } else if (choice.equals("2")) {
-        // System.out.println("===== 借書 =====");
-
-        // } else if (choice.equals("3")) {
-        // System.out.println("===== 還書 =====");
-
-        // } else if (choice.equals("0")) {
-        // System.out.println("===== 離開 =====");
-        // working = false;
-
-        // } else {
-        // System.out.println("===== 輸入錯誤 =====");
-
-        // }
-        // }
-
-        // sc.close();
+        boolean working = true; // true 可以一直在系統內運行, false 代表離開系統
 
         String dataFilePath = "src/senior/borrowGiveBackSystem/db/book.txt";
+        LibraryService service = null;
         try {
-            BookRepository b1 = new BookRepository(dataFilePath);
-            List<Book> books = b1.loadBooks();
-
+            service = new LibraryService(dataFilePath);
         } catch (Exception e) {
+            working = false;
             System.out.println(e.getMessage());
         }
 
+        Scanner sc = new Scanner(System.in);
+
+        while (working == true) {
+            System.out.println("===== 校園圖書館系統 =====");
+            System.out.println("1. 查看所有書籍");
+            System.out.println("2. 借書");
+            System.out.println("3. 還書");
+            System.out.println("0. 離開");
+            System.out.print("請輸入操作數字：");
+
+            String choice = sc.nextLine();
+
+            if (choice.equals("1")) {
+                System.out.println("===== 查看所有書籍 =====");
+                printBookInfo(service.getAllBooks());
+
+            } else if (choice.equals("2")) {
+                System.out.println("===== 借書 =====");
+
+            } else if (choice.equals("3")) {
+                System.out.println("===== 還書 =====");
+
+            } else if (choice.equals("0")) {
+                System.out.println("===== 離開 =====");
+                working = false;
+
+            } else {
+                System.out.println("===== 輸入錯誤 =====");
+
+            }
+        }
+
+        sc.close();
+
+        // String dataFilePath = "src/senior/borrowGiveBackSystem/db/book.txt";
+        // try {
+        // BookRepository b1 = new BookRepository(dataFilePath);
+        // List<Book> books = b1.loadBooks();
+        // System.out.println(books.get(1).getTitle());
+
+        // } catch (Exception e) {
+        // System.out.println(e.getMessage());
+        // }
+
+    }
+
+    public static void printBookInfo(List<Book> books) {
+        System.out.println("===== 書籍列表起始 =====");
+
+        for (int i = 0; i < books.size(); i++) {
+            System.out.println();
+            System.out.println(books.get(i).getInfo());
+        }
+
+        System.out.println("===== 書籍列表結束 =====");
     }
 }

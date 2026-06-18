@@ -13,7 +13,7 @@ public class BookRepository {
         this.dataFilePath = dataFilePath;
     }
 
-    // 讀檔
+    // 讀檔: String -> Book
     public List<Book> loadBooks() throws Exception {
         List<Book> books = new ArrayList<>();
 
@@ -36,6 +36,7 @@ public class BookRepository {
                 String extra = data[5];
                 String borrowUser = data[6];
 
+                // 組合成書是for 資料架構
                 if (type.equals("P")) {
                     // 程式類的書
                     ProgrammingBook p = new ProgrammingBook(number, title, author, available, borrowUser, extra);
@@ -58,7 +59,7 @@ public class BookRepository {
         return books;
     }
 
-    // 寫入
+    // 寫入: Book -> String
     public void saveBooks(List<Book> books) throws Exception {
         List<String> lines = new ArrayList<>();
 

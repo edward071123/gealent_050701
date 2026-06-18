@@ -47,4 +47,11 @@ public class Book {
         return getType() + "," + getNumber() + "," + getTitle() + "," + getAuthor() + "," + isAvailable() + ","
                 + getExtraInfo() + "," + getBorrowUser();
     }
+
+    public String getInfo() {
+        return "編號: " + getNumber() + "\n"
+                + "書名：" + getTitle() + "\n"
+                + "作者：" + getAuthor() + "\n"
+                + "可借：" + (isAvailable() ? "可" : "已被" + borrowUser + "借走");
+    }
 }

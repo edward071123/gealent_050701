@@ -18,4 +18,11 @@ public class ProgrammingBook extends Book {
     public String getExtraInfo() {
         return this.language;
     }
+
+    @Override
+    public String getInfo() {
+        return super.getInfo() + "\n"
+                + "類型：程式書\n"
+                + "語言：" + getExtraInfo();
+    }
 }
