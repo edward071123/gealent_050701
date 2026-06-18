@@ -44,7 +44,12 @@ public class UploadService {
     }
 
     // 把使用者選擇的圖片複製到 uploads 資料夾。
-    public File upload(File sourceFile, IUploadProgress uploadProgress) throws Exception {
+    public File upload(
+            File sourceFile,
+            int index,
+            int total,
+            IUploadTaskListener listener
+    ) throws Exception {
         /*
          * 上傳邏輯放在這個類別，而不是放在 Frame：
          *
@@ -86,7 +91,7 @@ public class UploadService {
 
                 // 計算目前上傳百分比，交給 Frame 更新進度條。
                 int progress = (int) ((copiedSize * 100) / totalSize);
-                uploadProgress.onProgress(progress);
+                listener.onProgress(sourceFile, index, total, progress);
 
                 // 教學用：稍微放慢一點，方便看到 loading 過程。
                 Thread.sleep(10);
@@ -169,20 +174,7 @@ public class UploadService {
             final AtomicInteger finishedCount
     ) {
         try {
-            /*
-             * IUploadProgress 是單檔上傳用的進度回報。
-             *
-             * upload(...) 每複製一段資料，就會呼叫 onProgress(progress)。
-             * 這裡再把 progress 轉交給多檔 listener。
-             */
-            IUploadProgress uploadProgress = new IUploadProgress() {
-                @Override
-                public void onProgress(int progress) {
-                    listener.onProgress(sourceFile, index, total, progress);
-                }
-            };
-
-            File targetFile = upload(sourceFile, uploadProgress);
+            File targetFile = upload(sourceFile, index, total, listener);
             listener.onSuccess(sourceFile, targetFile, index, total);
 
         } catch (Exception ex) {
