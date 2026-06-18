@@ -13,4 +13,9 @@ public class NovelBook extends Book {
     public String getType() {
         return "N";
     }
+
+    @Override
+    public String getExtraInfo() {
+        return this.category;
+    }
 }

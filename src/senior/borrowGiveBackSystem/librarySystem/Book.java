@@ -38,4 +38,13 @@ public class Book {
     public String getBorrowUser() {
         return this.borrowUser;
     }
+
+    public String getExtraInfo() {
+        return "";
+    }
+
+    public String toFileSting() {
+        return getType() + "," + getNumber() + "," + getTitle() + "," + getAuthor() + "," + isAvailable() + ","
+                + getExtraInfo() + "," + getBorrowUser();
+    }
 }

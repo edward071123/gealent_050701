@@ -13,4 +13,9 @@ public class ProgrammingBook extends Book {
     public String getType() {
         return "P";
     }
+
+    @Override
+    public String getExtraInfo() {
+        return this.language;
+    }
 }

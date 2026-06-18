@@ -49,6 +49,7 @@ public class BookRepository {
             }
 
         } catch (Exception e) {
+            // 去找出
             String filePath = Paths.get(this.dataFilePath).toAbsolutePath().toString();
             throw new Exception("讀取 books.txt 失敗: " + e.getMessage()
                     + ", 目前程式讀取檔案的路徑為: " + filePath);
@@ -58,4 +59,18 @@ public class BookRepository {
     }
 
     // 寫入
+    public void saveBooks(List<Book> books) throws Exception {
+        List<String> lines = new ArrayList<>();
+
+        for (Book oneBook : books) {
+            String oneLine = oneBook.toFileSting();
+            lines.add(oneLine);
+        }
+
+        try {
+            Files.write(Paths.get(this.dataFilePath), lines);
+        } catch (Exception e) {
+            throw new Exception("儲存 books.txt 失敗, 原因為: " + e.getMessage());
+        }
+    }
 }

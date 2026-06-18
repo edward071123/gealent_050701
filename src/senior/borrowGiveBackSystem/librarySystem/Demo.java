@@ -1,5 +1,6 @@
 package senior.borrowGiveBackSystem.librarySystem;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Demo {
@@ -83,7 +84,8 @@ public class Demo {
         String dataFilePath = "src/senior/borrowGiveBackSystem/db/book.txt";
         try {
             BookRepository b1 = new BookRepository(dataFilePath);
-            b1.loadBooks();
+            List<Book> books = b1.loadBooks();
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
