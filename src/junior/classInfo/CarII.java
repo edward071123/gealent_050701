@@ -1,4 +1,4 @@
-package junior.classIntroduction;
+package junior.classInfo;
 
 public class CarII {
     public String brand;

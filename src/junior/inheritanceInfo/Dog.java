@@ -1,4 +1,4 @@
-package junior.inheritanceIntroduction;
+package junior.inheritanceInfo;
 
 // extends 關鍵字用於表示繼承關係，Dog 類別繼承了 Animal 類別
 // Dog 是 Animal 的子類別(subclass)

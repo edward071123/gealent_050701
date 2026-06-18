@@ -13,3 +13,38 @@
 
 > 如果你想自訂資料夾結構，請開啟 `.vscode/settings.json`，並在其中更新相關設定。
 
+
+## 編譯指令
+```sh
+javac -d bin \
+    {檔案路徑}/*.java
+```
+## 範例編譯指令
+```sh
+javac -d bin \
+    src/junior/abstractInfo/*.java
+```
+
+## 打包成jar指令
+```sh
+  jar --create \
+    --file lib/{自訂檔案名稱}.jar \
+    --main-class {package路徑}.Demo \
+    -C bin .
+```
+## 範例打包成jar指令
+```sh
+  jar --create \
+    --file lib/AnonymousInfo.jar \
+    --main-class junior.anonymousInfo.Demo \
+    -C bin .
+```
+
+## 可執行jar指令
+```sh
+java -jar lib/{目標檔案名稱}.jar
+```
+## 範例可執行jar指令
+```sh
+java -jar lib/AbstractDemo.jar
+```

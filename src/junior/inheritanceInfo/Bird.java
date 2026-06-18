@@ -1,4 +1,4 @@
-package junior.inheritanceIntroduction;
+package junior.inheritanceInfo;
 
 public class Bird extends Animal {
 

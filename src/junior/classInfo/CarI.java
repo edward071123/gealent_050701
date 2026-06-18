@@ -1,4 +1,4 @@
-package junior.classIntroduction;
+package junior.classInfo;
 
 // 這是一個類別的建立流程, 想像成一個施作藍圖, 先把藍圖畫出來, 再來實體化物件
 // 類別 (Class) : 屬性(Fields) + 方法(Methods)

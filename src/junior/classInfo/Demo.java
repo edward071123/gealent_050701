@@ -1,4 +1,4 @@
-package junior.classIntroduction;
+package junior.classInfo;
 
 public class Demo {
     public static void main(String[] args) {

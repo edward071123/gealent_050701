@@ -1,4 +1,4 @@
-package junior.inheritanceIntroduction;
+package junior.inheritanceInfo;
 
 public class Demo {
     // 繼承的使用介紹
