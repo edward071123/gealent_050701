@@ -30,7 +30,7 @@ javac -d bin \
   jar --create \
     --file lib/{自訂檔案名稱}.jar \
     --main-class {package路徑}.Demo \
-    -C bin .
+    -C {目標資料夾} .
 ```
 ## 範例打包成jar指令
 ```sh
