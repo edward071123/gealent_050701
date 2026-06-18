@@ -19,10 +19,13 @@ public class BookRepository {
 
         try {
             // 讀book.txt的檔案每一行 存到lines這個集合內
+            // Paths.get(this.dataFilePath) 讀取檔案的路徑
             List<String> lines = Files.readAllLines(Paths.get(this.dataFilePath));
 
             for (String oneLine : lines) {
+                // "P,1,Java入門,張三,false,Java,aa"
                 // 字串切割
+                // 用符號分割且存成array
                 String[] data = oneLine.split(",", -1);
 
                 String type = data[0];
@@ -32,6 +35,17 @@ public class BookRepository {
                 boolean available = Boolean.parseBoolean(data[4]);
                 String extra = data[5];
                 String borrowUser = data[6];
+
+                if (type.equals("P")) {
+                    // 程式類的書
+                    ProgrammingBook p = new ProgrammingBook(number, title, author, available, borrowUser, extra);
+                    books.add(p);
+                } else if (type.equals("N")) {
+                    // 小說類的書
+                    NovelBook n = new NovelBook(number, title, author, available, borrowUser, extra);
+                    books.add(n);
+                }
+
             }
 
         } catch (Exception e) {
