@@ -54,4 +54,12 @@ public class Book {
                 + "作者：" + getAuthor() + "\n"
                 + "可借：" + (isAvailable() ? "可" : "已被" + borrowUser + "借走");
     }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    public void setBorrowUser(String borrowUser) {
+        this.borrowUser = borrowUser;
+    }
 }

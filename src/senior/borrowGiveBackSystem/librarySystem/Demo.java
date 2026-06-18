@@ -68,24 +68,41 @@ public class Demo {
 
             String choice = sc.nextLine();
 
-            if (choice.equals("1")) {
-                System.out.println("===== 查看所有書籍 =====");
-                printBookInfo(service.getAllBooks());
+            try {
+                if (choice.equals("1")) {
+                    // 查看所有書籍
+                    printBookInfo(service.getAllBooks());
 
-            } else if (choice.equals("2")) {
-                System.out.println("===== 借書 =====");
+                } else if (choice.equals("2")) {
+                    // 借書
+                    System.out.print("請輸入借閱人姓名：");
+                    String name = sc.nextLine();
 
-            } else if (choice.equals("3")) {
-                System.out.println("===== 還書 =====");
+                    System.out.print("請輸入書籍編號(數字)：");
+                    int number = Integer.parseInt(sc.nextLine());
 
-            } else if (choice.equals("0")) {
-                System.out.println("===== 離開 =====");
-                working = false;
+                    System.out.println(service.borrow(number, name));
 
-            } else {
-                System.out.println("===== 輸入錯誤 =====");
+                } else if (choice.equals("3")) {
+                    // 還書
+                    System.out.print("請輸入書籍編號(數字)：");
+                    int number = Integer.parseInt(sc.nextLine());
+                    System.out.println(service.giveBack(number));
 
+                } else if (choice.equals("0")) {
+                    System.out.println("===== 離開 =====");
+                    working = false;
+
+                } else {
+                    System.out.println("===== 輸入錯誤 =====");
+
+                }
+            } catch (Exception e) {
+                System.out.println("");
+                System.out.println("=====操作錯誤====");
+                System.out.println(e.getMessage());
             }
+
         }
 
         sc.close();
