@@ -45,6 +45,22 @@ public class Demo {
         // 覆寫 getType() 方法 => 回傳N
         // 建立建構子傳入以上屬性的資料進來
         //
+
+        /*
+            librarySystem
+                ├── main (主要功能制定)
+                    ├── IBorrow.java
+                ├── db (資料庫)
+                    ├── books.txt
+                ├── librarySystem (借還書系統功能實作)
+                    ├── Demo.java (畫面)
+                    ├── Book.java (把書物件化)
+                    ├── ProgrammingBook.java (把書物件化)
+                    ├── NovelBook.java (把書物件化)
+                    ├── BookRepository.java (針對資料庫的操作行為)
+                    └── LibraryService.java (商業邏輯的內容)
+        */
+        
         boolean working = true; // true 可以一直在系統內運行, false 代表離開系統
 
         String dataFilePath = "src/senior/borrowGiveBackSystem/db/book.txt";
