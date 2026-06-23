@@ -1,5 +1,7 @@
 package junior.anonymousInfo;
 
+import javax.swing.text.View;
+
 public class Demo {
     public static void main(String[] args) {
         // 匿名類別(Anonymous Class)介紹
@@ -12,23 +14,25 @@ public class Demo {
         dog1.sleep();
 
         System.out.println("===============匿名類別完整寫法===============");
-        AnimalI dog2 = new AnimalI() {
+        AnimalI cat1 = new AnimalI() {
+            // 匿名類別直接產生物件時去實作裡面的方法
             @Override
             public void speak() {
-                System.out.println("汪汪 (匿名類別完整寫法)");
+                System.out.println("咪喵 (匿名類別完整寫法)");
             }
 
             @Override
             public void sleep() {
-                System.out.println("狗睡覺 (匿名類別完整寫法)");
+                System.out.println("貓睡覺 (匿名類別完整寫法)");
             }
         };
 
-        dog2.speak();
+        cat1.speak();
+        cat1.sleep();
 
         System.out.println("===============匿名類別簡潔寫法===============");
 
-        // 簡潔的寫法 只適合 介面(interface)內只有一個方法需要被實作
+        // 簡潔的寫法 比較適合 介面(interface)內只有一個方法需要被實作
         new AnimalII() {
             @Override
             public void speak() {
@@ -36,6 +40,18 @@ public class Demo {
             }
 
         }.speak();
+
+        System.out.println("===============Lambda寫法===============");
+        // Java 8 開始提供
+        // Lambda寫法: 我連匿名類別都懶得寫, 只想實作一個方法
+        // 不可以用在抽象類別(abstract)上
+        // 一定要 介面(interface)內只有一個方法需要被實作
+        AnimalII bird1 = () -> {
+            System.out.println("啾啾叫1");
+            System.out.println("啾啾叫2");
+        };
+
+        bird1.speak();
 
     }
 }
