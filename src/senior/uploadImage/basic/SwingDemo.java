@@ -8,37 +8,46 @@ public class SwingDemo {
          * BorderLayout 會把畫面分成 5 個區域：
          *
          * +---------------------------+
-         * | NORTH |
+         * |          NORTH            |
          * +-------+-----------+-------+
-         * | WEST | CENTER | EAST |
-         * | | | |
+         * | WEST  |  CENTER   | EAST  |
+         * |       |           |       |
          * +-------+-----------+-------+
-         * | SOUTH |
+         * |          SOUTH            |
          * +---------------------------+
          *
          * 本程式實際放置的元件：
          *
          * JFrame
          * +-------------------------------------------------------------------+
-         * | topPanel |
+         * | topPanel                                                          |
          * | +--------------+--------------------------------+---------------+ |
-         * | | uploadButton | infoPanel | refreshButton | |
-         * | | | statusLabel + fileSizeLabel | | |
+         * | | uploadButton | infoPanel                      | refreshButton | |
+         * | |              | statusLabel + fileSizeLabel    |               | |
          * | +--------------+--------------------------------+---------------+ |
          * +------------------------+------------------------------------------+
-         * | splitPane | |
+         * | splitPane              |                                          |
          * | +--------------------+ | +--------------------------------------+ |
-         * | | listScrollPane | | | imageScrollPane | |
-         * | | imageList | | | imageLabel | |
-         * | | - d1.jpg | | | | |
-         * | | - d2.jpg | | | | |
+         * | | listScrollPane     | | | imageScrollPane                      | |
+         * | | imageList          | | | imageLabel                           | |
+         * | | - d1.jpg           | | |                                      | |
+         * | | - d2.jpg           | | |                                      | |
          * | +--------------------+ | +--------------------------------------+ |
          * +------------------------+------------------------------------------+
+         * | progressScrollPane                                                |
+         * | uploadProgressPanel                                               |
+         * | +---------------------------------------------------------------+ |
+         * | | 第 1/3 張 d1.jpg 40%                                          | |
+         * | | 第 2/3 張 d2.jpg 75%                                          | |
+         * | | 第 3/3 張 d3.jpg 10%                                          | |
+         * | +---------------------------------------------------------------+ |
+         * +-------------------------------------------------------------------+
          *
-         * BorderLayout.NORTH ：上方工具列 topPanel
+         * BorderLayout.NORTH  ：上方工具列 topPanel
          * BorderLayout.CENTER ：中間左右分割 splitPane
-         * splitPane 左邊 ：圖片清單 imageList
-         * splitPane 右邊 ：圖片預覽 imageLabel
+         * BorderLayout.SOUTH  ：下方多進度條區塊 uploadProgressPanel
+         * splitPane 左邊      ：圖片清單 imageList
+         * splitPane 右邊      ：圖片預覽 imageLabel
          */
     }
 }
