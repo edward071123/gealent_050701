@@ -12,98 +12,100 @@ public class ThreadDemo {
         // 情景: 生產線, 搶票, 影音串流, 上傳圖片, 多個重複的事情....
 
         // |---------|---------主執行緒(main)-----------------------
-        ///////////// |
-        ///////////// |---------執行緒1(Thread1)---------------------
-        ///////////// |
-        ///////////// |---------執行緒2(Thread2)---------------------
+        //           |
+        //           |---------執行緒1(Thread1)---------------------
+        //           |
+        //           |---------執行緒2(Thread2)---------------------
 
-        // Thread thread1 = new Thread(new Runnable() {
-        // @Override
-        // public void run() {
-        // for (int i = 0; i < 5; i++) {
-        // System.out.println("執行緒 1 正在執行: " + i);
-        // try {
-        // // 1000毫秒 = 1秒
-        // // 睡一秒鐘
-        // Thread.sleep(1000);
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
-        // }
-        // });
+        Thread thread1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 5; i++) {
+                    System.out.println("執行緒 1 正在執行: " + i);
+                    try {
+                        // 1000毫秒 = 1秒
+                        // 睡一秒鐘
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
 
-        // Thread thread2 = new Thread(() -> {
-        // for (int i = 0; i < 5; i++) {
-        // System.out.println("執行緒 2 正在執行: " + i);
-        // try {
-        // // 睡兩秒鐘
-        // Thread.sleep(2000);
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
-        // });
+        Thread thread2 = new Thread(() -> {
+            for (int i = 0; i < 5; i++) {
+                System.out.println("執行緒 2 正在執行: " + i);
+                try {
+                    // 睡兩秒鐘
+                    Thread.sleep(2000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
-        // // 排隊執行 thread1 全部跑完後 換 thread2
-        // thread1.run();
-        // thread2.run();
+        // 排隊執行 thread1 全部跑完後 換 thread2
+        thread1.run();
+        thread2.run();
 
-        // // 同步執行 thread1 跟 thread2 同步起跑
-        // thread1.start();
-        // thread2.start();
+        // 同步執行 thread1 跟 thread2 同步起跑
+        thread1.start();
+        thread2.start();
 
         // ========================main 執行緒查看================================
-        // System.out.println("main-thread start...");
+        System.out.println("main-thread start...");
 
-        // Thread thread3 = new Thread(() -> {
-        // System.out.println("thread3 run...");
-        // try {
-        // // 睡兩秒鐘
-        // Thread.sleep(2000);
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
-        // System.out.println("thread3 end.");
-        // });
+        Thread thread3 = new Thread(() -> {
+            System.out.println("thread3 run...");
+            try {
+                // 睡兩秒鐘
+                Thread.sleep(2000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println("thread3 end.");
+        });
 
-        // thread3.start();
+        thread3.start();
 
-        // try {
-        // Thread.sleep(1000);
-        // } catch(InterruptedException e) {}
+        try {
+            Thread.sleep(1000);
+        } catch(InterruptedException e) {}
 
-        // System.out.println("main-thread end...");
+        System.out.println("main-thread end...");
 
         // ========================中斷執行緒================================
 
         // System.out.println("main執行緒 開始");
-        // Thread thread4 = new Thread(() -> {
-        // while (!Thread.currentThread().isInterrupted()) {
-        // try {
-        // System.out.println("執行緒4執行中...");
-        // Thread.sleep(1000);
-        // } catch (InterruptedException e) {
-        // System.out.println("sleep 被 interrupt 中斷了");
+        Thread thread4 = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    System.out.println("執行緒4執行中...");
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    System.out.println("sleep 被 interrupt 中斷了");
 
-        // // 重要：InterruptedException 會清掉 interrupt 狀態
-        // // 所以這裡手動補回去，讓 while 條件可以結束
-        // Thread.currentThread().interrupt();
-        // }
-        // }
+                    // 重要：InterruptedException 會清掉 interrupt 狀態
+                    // 所以這裡手動補回去，讓 while 條件可以結束
+                    Thread.currentThread().interrupt();
+                }
+            }
 
-        // System.out.println("執行緒4結束");
-        // });
+            System.out.println("執行緒4結束");
+        });
 
         // // 啟動執行緒4
-        // thread4.start();
+        thread4.start();
 
-        // // main執行緒 停留3秒不動
-        // Thread.sleep(3000);
-        // System.out.println("main執行緒 讓呼叫 interrupt()");
-        // // 執行緒4開始中斷
-        // thread4.interrupt();
+        // main執行緒 停留3秒不動
+        Thread.sleep(3000);
+        System.out.println("main執行緒 讓呼叫 interrupt()");
+        // 執行緒4開始中斷
+        thread4.interrupt();
 
-        // thread4.join(); // main執行緒等待執行緒4程式結束
-        // System.out.println("main執行緒 結束");
+        thread4.join(); // main執行緒等待執行緒4程式結束
+        System.out.println("main執行緒 結束");
 
         // ==========================執行緒池==============================
         // ExecutorService：執行緒池
@@ -112,14 +114,14 @@ public class ThreadDemo {
 
         // 假設有8張圖片
         String[] imageNames = {
-                "cat.jpg",
-                "dog.png",
-                "family.jpeg",
-                "travel01.jpg",
-                "travel02.jpg",
-                "avatar.gif",
-                "food.png",
-                "receipt.jpg"
+            "cat.jpg",
+            "dog.png",
+            "family.jpeg",
+            "travel01.jpg",
+            "travel02.jpg",
+            "avatar.gif",
+            "food.png",
+            "receipt.jpg"
         };
 
         // 執行緒池開三條執行緒的線來處理上傳圖片
