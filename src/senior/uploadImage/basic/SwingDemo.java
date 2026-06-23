@@ -2,7 +2,7 @@ package senior.uploadImage.basic;
 
 public class SwingDemo {
     public static void main(String[] args) {
-        /*
+         /*
          * 畫面佈局簡圖：
          *
          * BorderLayout 會把畫面分成 5 個區域：
@@ -34,18 +34,13 @@ public class SwingDemo {
          * | | - d2.jpg           | | |                                      | |
          * | +--------------------+ | +--------------------------------------+ |
          * +------------------------+------------------------------------------+
-         * | progressScrollPane                                                |
-         * | uploadProgressPanel                                               |
-         * | +---------------------------------------------------------------+ |
-         * | | 第 1/3 張 d1.jpg 40%                                          | |
-         * | | 第 2/3 張 d2.jpg 75%                                          | |
-         * | | 第 3/3 張 d3.jpg 10%                                          | |
-         * | +---------------------------------------------------------------+ |
+         * | progressBar                                                       |
+         * | [ 0% ----------------------------------------------------- 100% ] |
          * +-------------------------------------------------------------------+
          *
          * BorderLayout.NORTH  ：上方工具列 topPanel
          * BorderLayout.CENTER ：中間左右分割 splitPane
-         * BorderLayout.SOUTH  ：下方多進度條區塊 uploadProgressPanel
+         * BorderLayout.SOUTH  ：下方進度條 progressBar
          * splitPane 左邊      ：圖片清單 imageList
          * splitPane 右邊      ：圖片預覽 imageLabel
          */
