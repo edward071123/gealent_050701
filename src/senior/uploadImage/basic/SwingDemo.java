@@ -169,6 +169,9 @@ class Frame extends JFrame {
         int result = chooser.showOpenDialog(this);
         // 選擇完畢的判斷
         if (result == JFileChooser.APPROVE_OPTION) {
+
+            // 2. 讀寫檔案
+
             // 來源檔案
             File sourceFile = chooser.getSelectedFile();
             // 目標資料夾
@@ -244,9 +247,6 @@ class Frame extends JFrame {
                 }
             }
         }
-
-        // 2. 讀寫檔案
-
     }
 
     public void loadImage() {
