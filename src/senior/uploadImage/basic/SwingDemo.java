@@ -11,47 +11,47 @@ import java.io.*;
 
 public class SwingDemo {
     /*
-     * 畫面佈局簡圖：
-     *
-     * BorderLayout 會把畫面分成 5 個區域：
-     *
-     * +---------------------------+
-     * | NORTH |
-     * +-------+-----------+-------+
-     * | WEST | CENTER | EAST |
-     * | | | |
-     * +-------+-----------+-------+
-     * | SOUTH |
-     * +---------------------------+
-     *
-     * 本程式實際放置的元件：
-     *
-     * JFrame
-     * +-------------------------------------------------------------------+
-     * | topPanel |
-     * | +--------------+--------------------------------+---------------+ |
-     * | | uploadButton | infoPanel | refreshButton | |
-     * | | | statusLabel + fileSizeLabel | | |
-     * | +--------------+--------------------------------+---------------+ |
-     * +------------------------+------------------------------------------+
-     * | splitPane | |
-     * | +--------------------+ | +--------------------------------------+ |
-     * | | listScrollPane | | | imageScrollPane | |
-     * | | imageList | | | imageLabel | |
-     * | | - d1.jpg | | | | |
-     * | | - d2.jpg | | | | |
-     * | +--------------------+ | +--------------------------------------+ |
-     * +------------------------+------------------------------------------+
-     * | progressBar |
-     * | [ 0% ----------------------------------------------------- 100% ] |
-     * +-------------------------------------------------------------------+
-     *
-     * BorderLayout.NORTH ：上方工具列 topPanel
-     * BorderLayout.CENTER ：中間左右分割 splitPane
-     * BorderLayout.SOUTH ：下方進度條 progressBar
-     * splitPane 左邊 ：圖片清單 imageList
-     * splitPane 右邊 ：圖片預覽 imageLabel
-     */
+    * 畫面佈局簡圖：
+    *
+    * BorderLayout 會把畫面分成 5 個區域：
+    *
+    * +---------------------------+
+    * |          NORTH            |
+    * +-------+-----------+-------+
+    * | WEST  |  CENTER   | EAST  |
+    * |       |           |       |
+    * +-------+-----------+-------+
+    * |          SOUTH            |
+    * +---------------------------+
+    *
+    * 本程式實際放置的元件：
+    *
+    * JFrame
+    * +-------------------------------------------------------------------+
+    * | topPanel                                                          |
+    * | +--------------+--------------------------------+---------------+ |
+    * | | uploadButton | infoPanel                      | refreshButton | |
+    * | |              | statusLabel + fileSizeLabel    |               | |
+    * | +--------------+--------------------------------+---------------+ |
+    * +------------------------+------------------------------------------+
+    * | splitPane              |                                          |
+    * | +--------------------+ | +--------------------------------------+ |
+    * | | listScrollPane     | | | imageScrollPane                      | |
+    * | | imageList          | | | imageLabel                           | |
+    * | | - d1.jpg           | | |                                      | |
+    * | | - d2.jpg           | | |                                      | |
+    * | +--------------------+ | +--------------------------------------+ |
+    * +------------------------+------------------------------------------+
+    * | progressBar                                                       |
+    * | [ 0% ----------------------------------------------------- 100% ] |
+    * +-------------------------------------------------------------------+
+    *
+    * BorderLayout.NORTH  ：上方工具列 topPanel
+    * BorderLayout.CENTER ：中間左右分割 splitPane
+    * BorderLayout.SOUTH  ：下方進度條 progressBar
+    * splitPane 左邊      ：圖片清單 imageList
+    * splitPane 右邊      ：圖片預覽 imageLabel
+    */
     public static void main(String[] args) {
         // 把工作丟給Swing的UI執行緒
         SwingUtilities.invokeLater(() -> {
@@ -137,11 +137,11 @@ class Frame extends JFrame {
 
         // 標準寫法
         // uploadButton.addActionListener(new ActionListener() {
-        // @Override
-        // public void actionPerformed(ActionEvent e) {
-        // // 上傳圖片
-        // uploadImage();
-        // }
+        //     @Override
+        //     public void actionPerformed(ActionEvent e) {
+        //         // 上傳圖片
+        //         uploadImage();
+        //     }
         // });
 
         // lambda 寫法
