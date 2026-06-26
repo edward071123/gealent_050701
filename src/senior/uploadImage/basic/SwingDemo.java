@@ -67,11 +67,13 @@ class Frame extends JFrame {
     public Frame() {
 
         // 畫面
+        // 範例互動網站:
+        // https://edward071123.github.io/gealent_050701/src/senior/uploadImage/basic/swing-demo.html
 
         setTitle("圖片上傳與瀏覽 - swing - 單檔");
         // 設定寬高
         setSize(900, 700);
-        // 按按鈕時結束城市
+        // 按按鈕時結束程式
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // 視窗設定在中央的位置
         setLocationRelativeTo(null);
