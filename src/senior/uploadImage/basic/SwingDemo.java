@@ -1,9 +1,6 @@
 package senior.uploadImage.basic;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
+import java.awt.*;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -65,11 +62,88 @@ public class SwingDemo {
 class Frame extends JFrame {
 
     public Frame() {
-
-        // 畫面
+        // ========================畫面 起始================================
         // 範例互動網站:
         // https://edward071123.github.io/gealent_050701/src/senior/uploadImage/basic/swing-demo.html
 
+        // Frame 基本設定
+        settingFrame();
+
+        //=================topPanel區塊的元件 起始============================
+        JButton uploadButton = new JButton("上傳圖片");
+
+        JLabel statusLabel = new JLabel("狀態：尚未選擇圖片");
+        JLabel fileSizeLabel = new JLabel("大小：-");
+        // GridLayout(列數, 欄數, 水平間距, 垂直間距)
+        JPanel infoPanel = new JPanel(new GridLayout(1, 2, 12, 0));
+        infoPanel.add(statusLabel);
+        infoPanel.add(fileSizeLabel);
+
+        JButton refreshButton = new JButton("重新整理");
+
+        // BorderLayout(水平間距, 垂直間距)
+        JPanel topPanel = new JPanel(new BorderLayout(8, 0));
+        topPanel.add(uploadButton, BorderLayout.WEST);
+        topPanel.add(infoPanel, BorderLayout.CENTER);
+        topPanel.add(refreshButton, BorderLayout.EAST);
+        //=================topPanel區塊的元件 結束=============================
+
+        //=================splitPane區塊的元件 起始============================
+        // 左側圖片清單一次只能選一張
+        // DefaultListModel：清單資料來源，顯示uploads資料夾的 File。
+        DefaultListModel<File> imageListModel = new DefaultListModel<>();
+        JList<File> imageList = new JList<>(imageListModel);
+        JScrollPane listScrollPane = new JScrollPane();
+        listScrollPane.add(imageList);
+
+        // 右邊的圖片顯示
+        JLabel imageLabel = new JLabel("尚未選擇圖片", SwingConstants.CENTER);
+        JScrollPane imageScrollPane = new JScrollPane();
+        imageScrollPane.add(imageLabel);
+
+        // JSplitPane：左右分割畫面(因為兩個區塊)
+        // HORIZONTAL_SPLIT 代表水平分割，也就是左邊一區、右邊一區。
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        // 設定左右分割線的位置。 往左數字小，往右數字大
+        splitPane.setDividerLocation(160);
+        splitPane.add(listScrollPane);
+        splitPane.add(imageScrollPane);
+        //=================splitPane區塊的元件 結束===========================
+
+        //=================progressBar區塊的元件 起始=========================
+        JProgressBar progressBar = new JProgressBar(0, 100);
+        // 設定進度條上面畫文字上去顯示 0%、50%、100% 這種文字
+        progressBar.setStringPainted(true);
+        //=================progressBar區塊的元件 結束=========================
+
+        // 三大區塊分北中南 貼到 Frame
+        add(topPanel, BorderLayout.NORTH);
+        add(splitPane, BorderLayout.CENTER);
+        add(progressBar, BorderLayout.SOUTH);
+        // 顯示視窗
+        setVisible(true);
+        // ========================畫面 結束==================================
+
+        // ========================事件 開始==================================
+        // 一般事件的寫法
+        // 要搭配以下import
+        // import java.awt.event.ActionEvent;
+        // import java.awt.event.ActionListener;
+        // uploadButton.addActionListener(new ActionListener() {
+        //     @Override
+        //     public void actionPerformed(ActionEvent e) {
+        //         uploadImage();
+        //     }
+        // });
+
+        // Lambda 寫法
+        // 監聽按鈕事件
+        uploadButton.addActionListener(e -> uploadImage());
+        refreshButton.addActionListener(e -> loadImage());
+        // ========================事件 結束==================================
+    }
+
+    private void settingFrame() {
         setTitle("圖片上傳與瀏覽 - swing - 單檔");
         // 設定寬高
         setSize(900, 700);
@@ -77,178 +151,11 @@ class Frame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // 視窗設定在中央的位置
         setLocationRelativeTo(null);
-
-        // 上傳的按鈕
-        JButton uploadButton = new JButton("上傳圖片");
-
-        // 狀態的標籤
-        JLabel statusLabel = new JLabel("狀態: 尚未選擇圖片");
-        // 檔案大小的標籤
-        JLabel fileSizeLabel = new JLabel("大小：-");
-        // 資訊的版面
-        JPanel infoPanel = new JPanel();
-        // 狀態的標籤疊加上資訊的版面
-        infoPanel.add(statusLabel);
-        // 檔案大小的標籤疊加上資訊的版面
-        infoPanel.add(fileSizeLabel);
-
-        // 重整按鈕
-        JButton refreshButton = new JButton("重新整理");
-
-        // 上面的Panel
-        // new BorderLayout(8, 0) 是8左右元件的間距
-        JPanel topPanel = new JPanel(new BorderLayout(8, 0));
-        topPanel.add(uploadButton, BorderLayout.WEST);
-        topPanel.add(infoPanel, BorderLayout.CENTER);
-        topPanel.add(refreshButton, BorderLayout.EAST);
-
-        // upload顯示檔案列表
-        JList<File> imageList = new JList<>();
-        // 左邊檔案列表的上下滾動畫面
-        JScrollPane listScrollPane = new JScrollPane();
-        listScrollPane.add(imageList);
-
-        // 顯示圖片
-        JLabel imageLabel = new JLabel();
-        // 右邊圖片預覽的滾動畫面
-        JScrollPane imageScrollPane = new JScrollPane();
-        imageScrollPane.add(imageLabel);
-
-        // 中間檔案列表 + 預覽圖片的Panel
-        // HORIZONTAL_SPLIT 代表水平分割，也就是左邊一區、右邊一區。
-        JSplitPane splitPane = new JSplitPane(
-                JSplitPane.HORIZONTAL_SPLIT,
-                listScrollPane,
-                imageScrollPane);
-
-        // 設定左右分割線的位置
-        splitPane.setDividerLocation(360);
-
-        // JProgressBar：顯示上傳進度，0 到 100 代表百分比。
-        JProgressBar progressBar = new JProgressBar(0, 100);
-        // 是否顯示0%、50%、100% 這種文字。
-        progressBar.setStringPainted(true);
-        progressBar.setValue(0);
-        progressBar.setString("0%");
-
-        add(topPanel, BorderLayout.NORTH);
-        add(splitPane, BorderLayout.CENTER);
-        add(progressBar, BorderLayout.SOUTH);
-
-        // 動作產生
-
-        // 標準寫法
-        // uploadButton.addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         // 上傳圖片
-        //         uploadImage();
-        //     }
-        // });
-
-        // lambda 寫法
-        uploadButton.addActionListener(e -> uploadImage());
-
-        refreshButton.addActionListener(e -> loadImage());
-
-        // 顯示視窗
-        setVisible(true);
     }
 
     // 上傳檔案
     public void uploadImage() {
-        // 1. 選擇檔案
-        JFileChooser chooser = new JFileChooser();
-        // 選擇檔案過濾器
-        chooser.setFileFilter(new FileNameExtensionFilter(
-                "圖片檔案 (*.jpg, *.jpeg, *.png, *.gif)",
-                "jpg",
-                "jpeg",
-                "png",
-                "gif"));
-
-        // 顯示選擇檔案畫面
-        int result = chooser.showOpenDialog(this);
-        // 選擇完畢的判斷
-        if (result == JFileChooser.APPROVE_OPTION) {
-
-            // 2. 讀寫檔案
-
-            // 來源檔案
-            File sourceFile = chooser.getSelectedFile();
-            // 目標資料夾
-            File uploadDir = new File("src/senior/uploadImage/uploads");
-
-            // 判斷資料夾是否存在
-            if (!uploadDir.exists()) {
-                // 創造資料夾
-                uploadDir.mkdirs();
-            }
-
-            // 目標檔案 = 目標資料夾 + 來源檔案的檔名
-            File targetFile = new File(uploadDir, sourceFile.getName());
-
-            // 1024 byte => 1 KB
-            // 1024 KB => 1 MB
-            // 1024 MB => 1 GB
-            // 1024 GB => 1 TB
-            // 每次讀取 4096 bytes，不要一次把整張圖片全部讀進記憶體。
-            byte[] buffer = new byte[4096];
-
-            // 原始檔案的大小
-            long totalSize = sourceFile.length();
-            // 已複製的檔案大小(進度條計算使用)
-            long copiedSize = 0;
-
-            FileInputStream fis = null;
-            FileOutputStream fos = null;
-
-            try {
-                // FileInputStream：從原始圖片讀取資料。
-                fis = new FileInputStream(sourceFile);
-
-                // FileOutputStream：把資料寫到 uploads 裡的新檔案。
-                fos = new FileOutputStream(targetFile);
-
-                int len;
-
-                // fis.read(buffer) 會把資料讀進 buffer。
-                // 回傳值 len 表示這次實際讀到幾個 bytes。
-                // 如果回傳 -1，代表檔案讀完了。
-                while ((len = fis.read(buffer)) != -1) {
-                    // 睡100毫秒, 為了觀察進度條
-                    Thread.sleep(100);
-                    // 只寫入本次實際讀到的長度 len。
-                    fos.write(buffer, 0, len);
-
-                    copiedSize += len;
-
-                    // 呼叫進度條更新的方法
-                    // printProgress(copiedSize, totalSize);
-                }
-
-                System.out.println();
-                System.out.println("上傳成功");
-
-            } catch (Exception e) {
-                System.out.println("圖片複製失敗：" + e.getMessage());
-
-            } finally {
-                // finally 不管成功或失敗都會執行，適合拿來關閉檔案資源。
-                try {
-                    if (fis != null) {
-                        fis.close();
-                    }
-
-                    if (fos != null) {
-                        fos.close();
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+       System.out.println("上傳檔案");
     }
 
     public void loadImage() {
