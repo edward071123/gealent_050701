@@ -1,6 +1,5 @@
 package senior.uploadImage.basic;
 
-import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
