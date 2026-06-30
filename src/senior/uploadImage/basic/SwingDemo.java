@@ -368,28 +368,110 @@ class Frame extends JFrame {
             return;
         }
 
-        // 依照右側可視區域等比例縮放圖片的演算法如下。
-        // if(imageLabel.getParent() instanceof JViewport) {
-        //     ((JViewport) imageLabel.getParent()).getExtentSize()
-        // } else {
-        //     imageLabel.getSize();
-        // }
+        /*
+         * 取得右邊圖片顯示區目前可以使用的大小。
+         *
+         * Dimension 是 一個用來裝寬度和高度的物件
+         * 
+         * imageLabel 放在 imageScrollPane 裡面時，
+         * imageLabel.getParent() 通常會是 JViewport。
+         * 
+         * • 可以把它想成這幾層：
+         *JScrollPane / imageScrollPane
+         *└── JViewport
+         *       └── imageLabel
+         *          └── ImageIcon / 圖片
+         *
+         *  圖層概念：
+         *  最外層：imageScrollPane
+         *  +--------------------------------------+
+         *  | JScrollPane                          |
+         *  |                                      |
+         *  |  中間可視區：JViewport                 |
+         *  |  +--------------------------------+  |
+         *  |  | JViewport                      |  |
+         *  |  |                                |  |
+         *  |  |  真正放圖片的元件：imageLabel     |  |
+         *  |  |  +--------------------------+  |  |
+         *  |  |  | imageLabel               |  |  |
+         *  |  |  |                          |  |  |
+         *  |  |  | ImageIcon 圖片            |  |  |
+         *  |  |  +--------------------------+  |  |
+         *  |  |                                |  |
+         *  |  +--------------------------------+  |
+         *  |                                      |
+         *  |  如果圖片太大，JScrollPane 會出現捲軸    |
+         *  +--------------------------------------+
+         *
+         * JViewport 是 JScrollPane 裡「目前看得到的區域」。
+         * 所以如果 parent 是 JViewport，
+         * 就用 getExtentSize() 取得可視範圍。
+         *
+         * 如果 parent 不是 JViewport，
+         * 就退而求其次用 imageLabel 自己的大小。
+         * 
+         * 重點：
+         *   imageScrollPane 是外框，負責提供捲軸
+         *   JViewport 是真正看得到的視窗區域
+         *   imageLabel 是放圖片的元件
+         *   用生活比喻：
+         *   
+         *   imageScrollPane = 相框外殼，帶捲軸
+         *   JViewport       = 相框中間透明玻璃，看得到的範圍
+         *   imageLabel      = 放在相框裡的紙
+         *   ImageIcon       = 紙上的圖片
+         */
         Dimension viewSize = imageLabel.getParent() instanceof JViewport
             ? ((JViewport) imageLabel.getParent()).getExtentSize()
             : imageLabel.getSize();
 
-        // 預留一點邊距，不要讓圖片緊貼邊界。
+        /*
+         * 預留一點邊距，不要讓圖片緊貼邊界。
+         *
+         * viewSize.width  是右邊顯示區的寬度。
+         * viewSize.height 是右邊顯示區的高度。
+         *
+         * 減 20 代表留一點空間。
+         *
+         * Math.max(100, ...)
+         * 是為了避免剛開畫面時 viewSize 太小，
+         * 導致 maxWidth 或 maxHeight 變成 0 或負數。
+         *  Math.max = 取較大的值
+         *  這裡是保底用，避免寬高太小
+         */
         int maxWidth = Math.max(100, viewSize.width - 20);
         int maxHeight = Math.max(100, viewSize.height - 20);
 
-        // 分別算出寬度比例和高度比例，取比較小的那個。
-        // 這樣圖片不會超出預覽區，也不會變形。
+        /*
+         * 分別算出寬度比例和高度比例，取比較小的那個。
+         *
+         * 例如：
+         * maxWidth = 400, imageWidth = 800
+         * 寬度比例 = 400 / 800 = 0.5
+         *
+         * maxHeight = 300, imageHeight = 300
+         * 高度比例 = 300 / 300 = 1.0
+         *
+         * 如果用 1.0，圖片寬度會超出畫面。
+         * 所以用 Math.min(...) 取比較小的 0.5。
+         *
+         * 這樣圖片不會超出預覽區，也不會變形。
+         */
         double scale = Math.min(
                 (double) maxWidth / imageWidth,
                 (double) maxHeight / imageHeight
         );
 
-        // 算出縮放後實際顯示的寬高。
+        /*
+         * 算出縮放後實際顯示的寬高。
+         *
+         * imageWidth * scale  = 縮放後寬度
+         * imageHeight * scale = 縮放後高度
+         *
+         * Math.max(1, ...)
+         * 是為了避免計算結果變成 0。
+         * 圖片寬高至少要是 1 才能顯示。
+         */
         int displayWidth = Math.max(1, (int) (imageWidth * scale));
         int displayHeight = Math.max(1, (int) (imageHeight * scale));
 
