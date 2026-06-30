@@ -370,6 +370,7 @@ class Frame extends JFrame {
 
         /*
          * 取得右邊圖片顯示區目前可以使用的大小。
+         * 互動網站: https://edward071123.github.io/gealent_050701/src/senior/uploadImage/basic/resize-image.html
          *
          * Dimension 是 一個用來裝寬度和高度的物件
          * 
