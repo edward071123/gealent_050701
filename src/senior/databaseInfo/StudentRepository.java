@@ -27,7 +27,34 @@ public class StudentRepository {
             }
 
         } catch (Exception e) {
-            throw new Exception("查詢出現問題:" + e.getMessage());
+            throw new Exception("查詢全部出現問題:" + e.getMessage());
+        }
+
+    }
+
+    // 查詢單一by Id
+    public void findOne(int id) throws Exception {
+        String sql = "SELECT * FROM students WHERE id = ?";
+        try (
+            // Java 7 開始新增的 try-with-resources，也是 JDBC 最推薦的寫法
+            // 需要關閉連線的寫在try(這裡面)
+            Connection connection = new DBConnection().getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+        ) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery();) {
+                while (rs.next()) {
+                    System.out.println(
+                            rs.getInt("id")
+                                + " "
+                                + rs.getString("name")
+                                + " "
+                                + rs.getInt("age")
+                    );
+                }
+            }
+        } catch (Exception e) {
+            throw new Exception("查詢單一出現問題:" + e.getMessage());
         }
 
     }
