@@ -6,6 +6,35 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class Demo {
+    /*
+        新增資料庫
+        CREATE DATABASE school;
+    
+        使用資料庫
+        USE school;
+    
+        新增資料表
+        CREATE TABLE students(
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(50),
+            age INT
+        );
+
+        單筆新增
+        INSERT INTO students (name, age) VALUES ('Tom', 18);
+
+        新增多筆
+        INSERT INTO students (name, age)
+        VALUES
+        ('Tom1', 18),
+        ('Amy', 20),
+        ('John', 21),
+        ('Mary', 19);
+
+        查詢
+        SELECT * FROM students;
+    */
+
     public static void main(String[] args) {
         String url = "jdbc:mysql://localhost:3306/school";
         String user = "root";
