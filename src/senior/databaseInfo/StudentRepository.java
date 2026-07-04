@@ -15,7 +15,7 @@ public class StudentRepository {
             Connection connection = new DBConnection().getConnection();
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();      
-        ){
+        ) {
             while (rs.next()) {
                 System.out.println(
                         rs.getInt("id")
@@ -41,7 +41,7 @@ public class StudentRepository {
             // 需要關閉連線的寫在try(這裡面)
             Connection connection = new DBConnection().getConnection();
             PreparedStatement ps = connection.prepareStatement(sql);   
-        ){
+        ) {
             ps.setString(1, student.getName());
             ps.setInt(2, student.getAge());
             int row = ps.executeUpdate();
@@ -54,11 +54,43 @@ public class StudentRepository {
 
     // 修改
     public void update(Student student) throws Exception {
+        String sql = "UPDATE students SET name=?, age=? WHERE id=?";
 
+        try (
+            // Java 7 開始新增的 try-with-resources，也是 JDBC 最推薦的寫法
+            // 需要關閉連線的寫在try(這裡面)
+            Connection connection = new DBConnection().getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);   
+        ) {
+            ps.setString(1, student.getName());
+            ps.setInt(2, student.getAge());
+            ps.setInt(3, student.getId());
+
+            int row = ps.executeUpdate();
+            System.out.println("修改成功：" + row);
+
+        } catch (Exception e) {
+            throw new Exception("修改出現問題:" + e.getMessage());
+        }
     }
 
     // 刪除
     public void delete(int id) throws Exception {
+         String sql = "DELETE FROM students WHERE id=?";
 
+        try (
+            // Java 7 開始新增的 try-with-resources，也是 JDBC 最推薦的寫法
+            // 需要關閉連線的寫在try(這裡面)
+            Connection connection = new DBConnection().getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);   
+        ) {
+            ps.setInt(1, id);
+            
+            int row = ps.executeUpdate();
+            System.out.println("刪除成功：" + row);
+
+        } catch (Exception e) {
+            throw new Exception("刪除出現問題:" + e.getMessage());
+        }
     }
 }
