@@ -13,6 +13,7 @@ public class StudentRepository {
             // Java 7 開始新增的 try-with-resources，也是 JDBC 最推薦的寫法
             // 需要關閉連線的寫在try(這裡面)
             Connection connection = new DBConnection().getConnection();
+            // 避免被SQL Injections(注入式語法) 攻擊
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();      
         ) {
@@ -39,6 +40,7 @@ public class StudentRepository {
             // Java 7 開始新增的 try-with-resources，也是 JDBC 最推薦的寫法
             // 需要關閉連線的寫在try(這裡面)
             Connection connection = new DBConnection().getConnection();
+            // 避免被SQL Injections(注入式語法) 攻擊
             PreparedStatement ps = connection.prepareStatement(sql);
         ) {
             ps.setInt(1, id);
@@ -67,6 +69,7 @@ public class StudentRepository {
             // Java 7 開始新增的 try-with-resources，也是 JDBC 最推薦的寫法
             // 需要關閉連線的寫在try(這裡面)
             Connection connection = new DBConnection().getConnection();
+            // 避免被SQL Injections(注入式語法) 攻擊
             PreparedStatement ps = connection.prepareStatement(sql);   
         ) {
             ps.setString(1, student.getName());
@@ -87,6 +90,7 @@ public class StudentRepository {
             // Java 7 開始新增的 try-with-resources，也是 JDBC 最推薦的寫法
             // 需要關閉連線的寫在try(這裡面)
             Connection connection = new DBConnection().getConnection();
+            // 避免被SQL Injections(注入式語法) 攻擊
             PreparedStatement ps = connection.prepareStatement(sql);   
         ) {
             ps.setString(1, student.getName());
@@ -109,6 +113,7 @@ public class StudentRepository {
             // Java 7 開始新增的 try-with-resources，也是 JDBC 最推薦的寫法
             // 需要關閉連線的寫在try(這裡面)
             Connection connection = new DBConnection().getConnection();
+            // 避免被SQL Injections(注入式語法) 攻擊
             PreparedStatement ps = connection.prepareStatement(sql);   
         ) {
             ps.setInt(1, id);
