@@ -3,6 +3,8 @@ package senior.borrowGiveBackSystem.librarySystemMysql;
 import java.util.List;
 import java.util.Scanner;
 
+import senior.borrowGiveBackSystem.librarySystemMysql.models.Book;
+
 public class Demo {
     public static void main(String[] args) {
         /*
@@ -14,8 +16,6 @@ public class Demo {
                 ├── librarySystem (借還書系統功能實作)
                     ├── Demo.java (畫面)
                     ├── Book.java (把書物件化)
-                    ├── ProgrammingBook.java (把書物件化)
-                    ├── NovelBook.java (把書物件化)
                     ├── BookRepository.java (針對資料庫的操作行為)
                     └── LibraryService.java (商業邏輯的內容)
         */

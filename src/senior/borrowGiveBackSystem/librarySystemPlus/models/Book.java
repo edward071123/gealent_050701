@@ -1,4 +1,4 @@
-package senior.borrowGiveBackSystem.librarySystemMysql;
+package senior.borrowGiveBackSystem.librarySystemPlus.models;
 
 public class Book {
     private String number;
@@ -6,17 +6,24 @@ public class Book {
     private String author;
     private boolean available;
     private String borrowUser;
+    private String categoryCode;
+    private String categoryName;
+    private String itemName;
 
-    public Book(String number, String title, String author, boolean available, String borrowUser) {
+    public Book(String number, String title, String author, boolean available, String borrowUser,
+            String categoryCode, String categoryName, String itemName) {
         this.number = number;
         this.title = title;
         this.author = author;
         this.available = available;
         this.borrowUser = borrowUser;
+        this.categoryCode = categoryCode;
+        this.categoryName = categoryName;
+        this.itemName = itemName;
     }
 
-    public String getType() {
-        return "B";
+    public String getCode() {
+        return this.categoryCode;
     }
 
     public String getNumber() {
@@ -40,11 +47,11 @@ public class Book {
     }
 
     public String getExtraInfo() {
-        return "";
+        return this.itemName;
     }
 
     public String toFileSting() {
-        return getType() + "," + getNumber() + "," + getTitle() + "," + getAuthor() + "," + isAvailable() + ","
+        return getCode() + "," + getNumber() + "," + getTitle() + "," + getAuthor() + "," + isAvailable() + ","
                 + getExtraInfo() + "," + getBorrowUser();
     }
 
@@ -52,7 +59,21 @@ public class Book {
         return "編號: " + getNumber() + "\n"
                 + "書名：" + getTitle() + "\n"
                 + "作者：" + getAuthor() + "\n"
+                + "類型：" + this.categoryName + "\n"
+                + getItemLabel() + "：" + getExtraInfo() + "\n"
                 + "可借：" + (isAvailable() ? "可" : "已被" + borrowUser + "借走");
+    }
+
+    private String getItemLabel() {
+        if (this.categoryCode.equals("programming")) {
+            return "語言";
+        }
+
+        if (this.categoryCode.equals("novel")) {
+            return "分類";
+        }
+
+        return "項目";
     }
 
     public void setAvailable(boolean available) {

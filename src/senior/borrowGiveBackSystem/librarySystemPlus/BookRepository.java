@@ -1,4 +1,4 @@
-package senior.borrowGiveBackSystem.librarySystemMysql;
+package senior.borrowGiveBackSystem.librarySystemPlus;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,9 +6,9 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import senior.borrowGiveBackSystem.librarySystemMysql.models.Book;
-import senior.borrowGiveBackSystem.librarySystemMysql.models.Category;
-import senior.borrowGiveBackSystem.librarySystemMysql.models.Item;
+import senior.borrowGiveBackSystem.librarySystemPlus.models.Book;
+import senior.borrowGiveBackSystem.librarySystemPlus.models.Category;
+import senior.borrowGiveBackSystem.librarySystemPlus.models.Item;
 
 public class BookRepository {
 
