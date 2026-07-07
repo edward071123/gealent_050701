@@ -1,8 +1,8 @@
-CREATE DATABASE IF NOT EXISTS library
+CREATE DATABASE IF NOT EXISTS library_mysql
     DEFAULT CHARACTER SET utf8mb4
     DEFAULT COLLATE utf8mb4_unicode_ci;
 
-USE library;
+USE library_mysql;
 
 CREATE TABLE IF NOT EXISTS categories (
     id INT AUTO_INCREMENT PRIMARY KEY,

@@ -164,21 +164,55 @@ public class BookRepository {
     // 判斷 categories.name 是否代表「程式書」
     // 這裡多支援幾種寫法，讓資料庫可以放 P、Programming、程式書、程式類。
     private boolean isProgrammingCategory(String categoryName) {
-        return "P".equalsIgnoreCase(categoryName)
-                || "Programming".equalsIgnoreCase(categoryName)
-                || "ProgrammingBook".equalsIgnoreCase(categoryName)
-                || "程式書".equals(categoryName)
-                || "程式類".equals(categoryName);
+
+        if (categoryName.equalsIgnoreCase("P")) {
+            return true;
+        }
+
+        if (categoryName.equalsIgnoreCase("Programming")) {
+            return true;
+        }
+
+        if (categoryName.equalsIgnoreCase("ProgrammingBook")) {
+            return true;
+        }
+
+        if (categoryName.equals("程式書")) {
+            return true;
+        }
+
+        if (categoryName.equals("程式類")) {
+            return true;
+        }
+
+        return false;
     }
 
     // 判斷 categories.name 是否代表「小說」
     // 這裡多支援幾種寫法，讓資料庫可以放 N、Novel、小說、小說類。
     private boolean isNovelCategory(String categoryName) {
-        return "N".equalsIgnoreCase(categoryName)
-                || "Novel".equalsIgnoreCase(categoryName)
-                || "NovelBook".equalsIgnoreCase(categoryName)
-                || "小說".equals(categoryName)
-                || "小說類".equals(categoryName);
+
+        if (categoryName.equalsIgnoreCase("N")) {
+            return true;
+        }
+
+        if (categoryName.equalsIgnoreCase("Novel")) {
+            return true;
+        }
+
+        if (categoryName.equalsIgnoreCase("NovelBook")) {
+            return true;
+        }
+
+        if (categoryName.equals("小說")) {
+            return true;
+        }
+
+        if (categoryName.equals("小說類")) {
+            return true;
+        }
+
+        return false;
     }
 
     // 用來暫存 categories 資料表查到的結果
