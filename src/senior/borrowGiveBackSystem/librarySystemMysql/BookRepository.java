@@ -70,7 +70,9 @@ public class BookRepository {
 
         try (
                 Connection connection = new DBConnection().getConnection();
-                PreparedStatement ps = connection.prepareStatement(sql);) {
+                PreparedStatement ps = connection.prepareStatement(sql);
+            ) 
+        {
             for (Book oneBook : books) {
                 // 第 1 個 ? 對應 available 欄位
                 ps.setBoolean(1, oneBook.isAvailable());
@@ -154,6 +156,7 @@ public class BookRepository {
         if (isProgrammingCategory(categoryName)) {
             return new ProgrammingBook(number, title, author, available, borrowUser, categorySubName);
         }
+        
         if (isNovelCategory(categoryName)) {
             return new NovelBook(number, title, author, available, borrowUser, categorySubName);
         }
