@@ -215,20 +215,4 @@ public class BookRepository {
         return false;
     }
 
-    // 用來暫存 categories 資料表查到的結果
-    //
-    // 因為這個資料只在 BookRepository 裡面使用，
-    // 所以做成 private static class，不需要另外建立一個 CategoryInfo.java。
-    private static class CategoryInfo {
-        // categories.name：大分類名稱，例如 P、N、程式書、小說
-        private String name;
-
-        // categories.sub_name：子分類，例如 Java、Python、奇幻、歷史
-        private String subName;
-
-        public CategoryInfo(String name, String subName) {
-            this.name = name;
-            this.subName = subName;
-        }
-    }
 }
