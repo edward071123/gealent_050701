@@ -1,4 +1,4 @@
-package senior.borrowGiveBackSystem.librarySystemPlus.models;
+package senior.borrowGiveBackSystemPlus.models;
 
 public class Book {
     private String number;
@@ -6,17 +6,23 @@ public class Book {
     private String author;
     private boolean available;
     private String borrowUser;
+    private int borrowMemberId;
+    private int categoryId;
+    private int itemId;
     private String categoryCode;
     private String categoryName;
     private String itemName;
 
-    public Book(String number, String title, String author, boolean available, String borrowUser,
-            String categoryCode, String categoryName, String itemName) {
+    public Book(String number, String title, String author, boolean available, String borrowUser, int borrowMemberId,
+            int categoryId, int itemId, String categoryCode, String categoryName, String itemName) {
         this.number = number;
         this.title = title;
         this.author = author;
         this.available = available;
         this.borrowUser = borrowUser;
+        this.borrowMemberId = borrowMemberId;
+        this.categoryId = categoryId;
+        this.itemId = itemId;
         this.categoryCode = categoryCode;
         this.categoryName = categoryName;
         this.itemName = itemName;
@@ -36,6 +42,18 @@ public class Book {
 
     public String getAuthor() {
         return this.author;
+    }
+
+    public int getBorrowMemberId() {
+        return this.borrowMemberId;
+    }
+
+    public int getCategoryId() {
+        return this.categoryId;
+    }
+
+    public int getItemId() {
+        return this.itemId;
     }
 
     public boolean isAvailable() {
@@ -82,5 +100,9 @@ public class Book {
 
     public void setBorrowUser(String borrowUser) {
         this.borrowUser = borrowUser;
+    }
+
+    public void setBorrowMemberId(int borrowMemberId) {
+        this.borrowMemberId = borrowMemberId;
     }
 }

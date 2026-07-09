@@ -1,4 +1,4 @@
-package senior.borrowGiveBackSystem.librarySystemPlus.models;
+package senior.borrowGiveBackSystemPlus.models;
 
 public class Item {
     private int id;
