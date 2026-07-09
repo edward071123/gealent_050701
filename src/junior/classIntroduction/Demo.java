@@ -81,7 +81,6 @@ public class Demo {
         // 梯形需要 topBase, bottomBase 和 height
         // 並且直接在建構子內去計算面積
         // 呼叫一個印出面積的方法來顯示結果 getArea() 回傳型態為void
-        int r = 5;
         AreaPlus areaPlus1 = new AreaPlus(5); // 圓形
         areaPlus1.getArea();
 

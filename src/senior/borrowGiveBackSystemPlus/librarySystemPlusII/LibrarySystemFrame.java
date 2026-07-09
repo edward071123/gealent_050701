@@ -137,36 +137,9 @@ public class LibrarySystemFrame extends JFrame {
         setVisible(true);
     }
 
-    // 初始化假會員資料。
-    // passwordHash 在這個 II 畫面版先放明碼，主要用來示範登入流程。
-    private void initMembers() {
-        members.add(new Member(1, "admin", "管理員", "admin123", true));
-        members.add(new Member(2, "aa", "AA會員", "aa123", false));
-    }
-
-    // 初始化分類資料。現在分類只保留 id 與 name，不再使用 code。
-    private void initCategories() {
-        categories.add(new Category(1, "小說類"));
-        categories.add(new Category(2, "程式類"));
-    }
-
-    // 初始化子分類資料。
-    // categoryId 用來表示這個子分類屬於哪個分類。
-    private void initItems() {
-        items.add(new Item(1, 2, "Java"));
-        items.add(new Item(2, 2, "Python"));
-        items.add(new Item(3, 1, "奇幻"));
-        items.add(new Item(4, 1, "歷史"));
-    }
-
-    // 初始化書籍資料。
-    // Book 內同時放 categoryId/itemId 與分類名稱/子分類名稱，方便畫面表格直接顯示。
-    private void initBooks() {
-        books.add(new Book("1", "Java入門", "張三", false, members.get(0).getDisplayName(), 2, 2, 1, "程式類", "Java"));
-        books.add(new Book("2", "Python程式設計", "王五", true, "", 0, 2, 2, "程式類", "Python"));
-        books.add(new Book("3", "哈利波特", "J.K.Rowling", true, "", 0, 1, 3, "小說類", "奇幻"));
-        books.add(new Book("4", "達文西密碼", "丹布朗", true, "", 0, 1, 4, "小說類", "歷史"));
-    }
+    // ============================================================
+    // 畫面生成區
+    // ============================================================
 
     // 建立登入頁。
     //
@@ -175,19 +148,19 @@ public class LibrarySystemFrame extends JFrame {
     // JPanel page = new JPanel(new BorderLayout())
     //
     // +------------------------------------------------+
-    // | NORTH                                          | --> titleLabel：librarySystemPlusII
+    // | NORTH  ----------------------------------------|---> titleLabel：librarySystemPlusII
     // +------------------------------------------------+
-    // | CENTER                                         | --> formPanel = BoxLayout.Y_AXIS
+    // | CENTER ----------------------------------------|---> formPanel = BoxLayout.Y_AXIS
     // |                                                |
-    // |   loginBox                                     | --> 登入資訊區塊，有邊框
-    // |     createFieldPanel("account", accountField)  | --> 帳號輸入列
-    // |     createFieldPanel("password", passwordField)| --> 密碼輸入列
-    // |     loginMessageLabel                          | --> 登入提示 / 錯誤訊息
-    // |     buttonPanel                                | --> FlowLayout.RIGHT
-    // |       loginButton                              | --> 登入按鈕
+    // |   loginBox ------------------------------------|---> 登入資訊區塊，有邊框
+    // |     createFieldPanel("account", accountField) -|---> 帳號輸入列
+    // |     createFieldPanel("password", passwordField)|---> 密碼輸入列
+    // |     loginMessageLabel -------------------------|---> 登入提示 / 錯誤訊息
+    // |     buttonPanel -------------------------------|---> FlowLayout.RIGHT
+    // |       loginButton -----------------------------|---> 登入按鈕
     // |                                                |
-    // |   hintBox                                      | --> 假資料帳密區塊，有邊框
-    // |     createLoginHintPanel()                     | --> 假帳密提示表格
+    // |   hintBox  ------------------------------------|---> 假資料帳密區塊，有邊框
+    // |     createLoginHintPanel() --------------------|---> 假帳密提示表格
     // +------------------------------------------------+
     private JPanel createLoginPanel() {
         JPanel page = new JPanel(new BorderLayout());
@@ -280,11 +253,6 @@ public class LibrarySystemFrame extends JFrame {
         return label;
     }
 
-    // 專案名稱 = 專案主名稱 + 版本號。
-    // 例如 librarySystemPlus + II = librarySystemPlusII。
-    private String getProjectName() {
-        return projectTitle + projectVersion;
-    }
 
     // 建立登入後主畫面。
     //
@@ -463,20 +431,6 @@ public class LibrarySystemFrame extends JFrame {
         panel.add(buttonPanel, BorderLayout.NORTH);
         panel.add(new JLabel(buildBookSummaryText()), BorderLayout.SOUTH);
         return panel;
-    }
-
-    // 借書/還書的暫時事件處理。
-    // 目前只顯示「會員 xxx 借入/歸還 xxx 書」，尚未真的改變 books 狀態。
-    private void showBorrowActionMessage(String action) {
-        int selectedRow = bookTable.getSelectedRow();
-        if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(this, "請先選擇一本書");
-            return;
-        }
-
-        int modelRow = bookTable.convertRowIndexToModel(selectedRow);
-        String bookName = bookTable.getModel().getValueAt(modelRow, 1).toString();
-        JOptionPane.showMessageDialog(this, "會員 " + currentMember.getDisplayName() + " " + action + "「" + bookName + "」書");
     }
 
     // Tab 2：admin 才加入 會員管理 createMemberManageTab() 佈局圖：
@@ -663,119 +617,59 @@ public class LibrarySystemFrame extends JFrame {
         return panel;
     }
 
-    // 將 categories 轉成 JComboBox 選項。
-    // 第一個固定放「全部」，後面才是每個分類名稱。
-    private String[] buildCategoryOptions() {
-        String[] options = new String[categories.size() + 1];
-        options[0] = "全部";
-        for (int i = 0; i < categories.size(); i++) {
-            options[i + 1] = categories.get(i).getName();
-        }
-        return options;
+    // 建立書籍新增/修改共用表單。
+    // 同一個表單方法可同時支援新增與修改，差別只在傳入欄位是否已先填值。
+    private JPanel createBookFormPanel(JTextField numberField, JTextField titleField, JTextField authorField,
+            JComboBox<String> categoryComboBox, JComboBox<String> itemComboBox) {
+        JPanel formPanel = new JPanel(new GridLayout(5, 2, 8, 8));
+        formPanel.add(new JLabel("編號："));
+        formPanel.add(numberField);
+        formPanel.add(new JLabel("書名："));
+        formPanel.add(titleField);
+        formPanel.add(new JLabel("作者："));
+        formPanel.add(authorField);
+        formPanel.add(new JLabel("分類："));
+        formPanel.add(categoryComboBox);
+        formPanel.add(new JLabel("子分類："));
+        formPanel.add(itemComboBox);
+        return formPanel;
     }
 
-    // 將 books 轉成借還書表格使用的二維陣列。
-    // JTable 的 DefaultTableModel 需要 Object[][] 當作資料列。
-    private Object[][] buildBookTableData() {
-        Object[][] data = new Object[books.size()][7];
-        for (int i = 0; i < books.size(); i++) {
-            Book book = books.get(i);
-            data[i][0] = book.getNumber();
-            data[i][1] = book.getTitle();
-            data[i][2] = book.getAuthor();
-            data[i][3] = findCategoryName(book.getCategoryId());
-            data[i][4] = findItemName(book.getItemId());
-            data[i][5] = book.isAvailable() ? "可借閱" : "已借出";
-            data[i][6] = book.getBorrowUser();
-        }
-        return data;
+    // 建立分類表單，目前只有分類名稱。
+    private JPanel createCategoryFormPanel(JTextField nameField) {
+        JPanel formPanel = new JPanel(new GridLayout(1, 2, 8, 8));
+        formPanel.add(new JLabel("名稱："));
+        formPanel.add(nameField);
+        return formPanel;
     }
 
-    // 將 books 轉成書籍管理表格資料。
-    // 管理頁不需要顯示狀態與借閱人，所以欄位比借還書頁少。
-    private Object[][] buildBookManageTableData() {
-        Object[][] data = new Object[books.size()][5];
-        for (int i = 0; i < books.size(); i++) {
-            Book book = books.get(i);
-            data[i][0] = book.getNumber();
-            data[i][1] = book.getTitle();
-            data[i][2] = book.getAuthor();
-            data[i][3] = findCategoryName(book.getCategoryId());
-            data[i][4] = findItemName(book.getItemId());
-        }
-        return data;
+    // 建立子分類表單，需要選所屬分類並填入名稱。
+    private JPanel createItemFormPanel(JComboBox<String> categoryComboBox, JTextField nameField) {
+        JPanel formPanel = new JPanel(new GridLayout(2, 2, 8, 8));
+        formPanel.add(new JLabel("分類："));
+        formPanel.add(categoryComboBox);
+        formPanel.add(new JLabel("名稱："));
+        formPanel.add(nameField);
+        return formPanel;
     }
 
-    // 將 categories 轉成分類管理表格資料。
-    private Object[][] buildCategoryTableData() {
-        Object[][] data = new Object[categories.size()][2];
-        for (int i = 0; i < categories.size(); i++) {
-            Category category = categories.get(i);
-            data[i][0] = category.getId();
-            data[i][1] = category.getName();
-        }
-        return data;
-    }
+    // ============================================================
+    // 動作處理區
+    // ============================================================
 
-    // 將 members 轉成會員管理表格資料。
-    private Object[][] buildMemberTableData() {
-        Object[][] data = new Object[members.size()][4];
-        for (int i = 0; i < members.size(); i++) {
-            Member member = members.get(i);
-            data[i][0] = member.getId();
-            data[i][1] = member.getAccount();
-            data[i][2] = member.getDisplayName();
-            data[i][3] = member.isAdmin() ? "是" : "否";
-        }
-        return data;
-    }
 
-    // 將 items 轉成子分類管理表格資料。
-    private Object[][] buildItemTableData() {
-        Object[][] data = new Object[items.size()][3];
-        for (int i = 0; i < items.size(); i++) {
-            Item item = items.get(i);
-            data[i][0] = item.getId();
-            data[i][1] = item.getCategoryId();
-            data[i][2] = item.getName();
-        }
-        return data;
-    }
-
-    // 計算借還書頁下方統計文字。
-    // 因為資料都在 books 裡，所以統計也直接從 books 計算。
-    private String buildBookSummaryText() {
-        int availableCount = 0;
-        for (Book book : books) {
-            if (book.isAvailable()) {
-                availableCount++;
-            }
+    // 借書/還書的暫時事件處理。
+    // 目前只顯示「會員 xxx 借入/歸還 xxx 書」，尚未真的改變 books 狀態。
+    private void showBorrowActionMessage(String action) {
+        int selectedRow = bookTable.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "請先選擇一本書");
+            return;
         }
 
-        return "目前共有：" + books.size() + " 本書 可借閱：" + availableCount + " 本 已借出："
-                + (books.size() - availableCount) + " 本";
-    }
-
-    // 用 categoryId 找分類名稱，讓表格可以顯示中文分類。
-    private String findCategoryName(int categoryId) {
-        for (Category category : categories) {
-            if (category.getId() == categoryId) {
-                return category.getName();
-            }
-        }
-
-        return "";
-    }
-
-    // 用 itemId 找子分類名稱，讓表格可以顯示子分類。
-    private String findItemName(int itemId) {
-        for (Item item : items) {
-            if (item.getId() == itemId) {
-                return item.getName();
-            }
-        }
-
-        return "";
+        int modelRow = bookTable.convertRowIndexToModel(selectedRow);
+        String bookName = bookTable.getModel().getValueAt(modelRow, 1).toString();
+        JOptionPane.showMessageDialog(this, "會員 " + currentMember.getDisplayName() + " " + action + "「" + bookName + "」書");
     }
 
     // 新增書籍。
@@ -1032,39 +926,358 @@ public class LibrarySystemFrame extends JFrame {
 
     // 建立書籍新增/修改共用表單。
     // 同一個表單方法可同時支援新增與修改，差別只在傳入欄位是否已先填值。
-    private JPanel createBookFormPanel(JTextField numberField, JTextField titleField, JTextField authorField,
-            JComboBox<String> categoryComboBox, JComboBox<String> itemComboBox) {
-        JPanel formPanel = new JPanel(new GridLayout(5, 2, 8, 8));
-        formPanel.add(new JLabel("編號："));
-        formPanel.add(numberField);
-        formPanel.add(new JLabel("書名："));
-        formPanel.add(titleField);
-        formPanel.add(new JLabel("作者："));
-        formPanel.add(authorField);
-        formPanel.add(new JLabel("分類："));
-        formPanel.add(categoryComboBox);
-        formPanel.add(new JLabel("子分類："));
-        formPanel.add(itemComboBox);
-        return formPanel;
+
+
+    // 新增會員。
+    // 表單包含帳號、顯示姓名、密碼、是否管理員。
+    private void addMember(DefaultTableModel memberTableModel, String[] columns) {
+        JTextField accountTextField = new JTextField(12);
+        JTextField displayNameTextField = new JTextField(12);
+        JPasswordField passwordTextField = new JPasswordField(12);
+        JCheckBox adminCheckBox = new JCheckBox("管理員");
+
+        JPanel formPanel = new JPanel(new GridLayout(4, 2, 8, 8));
+        formPanel.add(new JLabel("帳號："));
+        formPanel.add(accountTextField);
+        formPanel.add(new JLabel("顯示姓名："));
+        formPanel.add(displayNameTextField);
+        formPanel.add(new JLabel("密碼："));
+        formPanel.add(passwordTextField);
+        formPanel.add(new JLabel("是否管理員："));
+        formPanel.add(adminCheckBox);
+
+        int result = JOptionPane.showConfirmDialog(this, formPanel, "新增會員", JOptionPane.OK_CANCEL_OPTION);
+        if (result != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        String account = accountTextField.getText().trim();
+        String displayName = displayNameTextField.getText().trim();
+        String password = new String(passwordTextField.getPassword());
+        if (account.isEmpty() || displayName.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "帳號、顯示姓名、密碼都必填");
+            return;
+        }
+
+        if (findMemberByAccount(account) != null) {
+            JOptionPane.showMessageDialog(this, "帳號已存在");
+            return;
+        }
+
+        members.add(new Member(getNextMemberId(), account, displayName, password, adminCheckBox.isSelected()));
+        reloadMemberTable(memberTableModel, columns);
+        JOptionPane.showMessageDialog(this, "新增會員執行成功");
     }
 
-    // 建立分類表單，目前只有分類名稱。
-    private JPanel createCategoryFormPanel(JTextField nameField) {
+    // 修改會員基本資料。
+    // 密碼不在這裡修改，密碼由 updateMemberPassword 專門負責。
+    private void updateMemberInfo(JTable memberTable, DefaultTableModel memberTableModel, String[] columns) {
+        Member member = getSelectedMember(memberTable);
+        if (member == null) {
+            return;
+        }
+
+        JTextField accountTextField = new JTextField(member.getAccount(), 12);
+        JTextField displayNameTextField = new JTextField(member.getDisplayName(), 12);
+        JCheckBox adminCheckBox = new JCheckBox("管理員", member.isAdmin());
+
+        JPanel formPanel = new JPanel(new GridLayout(3, 2, 8, 8));
+        formPanel.add(new JLabel("帳號："));
+        formPanel.add(accountTextField);
+        formPanel.add(new JLabel("顯示姓名："));
+        formPanel.add(displayNameTextField);
+        formPanel.add(new JLabel("是否管理員："));
+        formPanel.add(adminCheckBox);
+
+        int result = JOptionPane.showConfirmDialog(this, formPanel, "修改會員資料", JOptionPane.OK_CANCEL_OPTION);
+        if (result != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        String account = accountTextField.getText().trim();
+        String displayName = displayNameTextField.getText().trim();
+        if (account.isEmpty() || displayName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "帳號、顯示姓名都必填");
+            return;
+        }
+
+        Member sameAccountMember = findMemberByAccount(account);
+        if (sameAccountMember != null && sameAccountMember.getId() != member.getId()) {
+            JOptionPane.showMessageDialog(this, "帳號已存在");
+            return;
+        }
+
+        replaceMember(new Member(member.getId(), account, displayName, member.getPasswordHash(), adminCheckBox.isSelected()));
+        reloadMemberTable(memberTableModel, columns);
+        JOptionPane.showMessageDialog(this, "修改會員資料執行成功");
+    }
+
+    // 修改會員密碼。
+    // 這裡只更新 passwordHash 欄位，其它會員資料維持不變。
+    private void updateMemberPassword(JTable memberTable) {
+        Member member = getSelectedMember(memberTable);
+        if (member == null) {
+            return;
+        }
+
+        JPasswordField passwordTextField = new JPasswordField(12);
         JPanel formPanel = new JPanel(new GridLayout(1, 2, 8, 8));
-        formPanel.add(new JLabel("名稱："));
-        formPanel.add(nameField);
-        return formPanel;
+        formPanel.add(new JLabel("新密碼:"));
+        formPanel.add(passwordTextField);
+
+        int result = JOptionPane.showConfirmDialog(this, formPanel, "修改會員密碼", JOptionPane.OK_CANCEL_OPTION);
+        if (result != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        String password = new String(passwordTextField.getPassword());
+        if (password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "新密碼必填");
+            return;
+        }
+
+        replaceMember(new Member(member.getId(), member.getAccount(), member.getDisplayName(), password, member.isAdmin()));
+        JOptionPane.showMessageDialog(this, "修改會員密碼執行成功");
     }
 
-    // 建立子分類表單，需要選所屬分類並填入名稱。
-    private JPanel createItemFormPanel(JComboBox<String> categoryComboBox, JTextField nameField) {
-        JPanel formPanel = new JPanel(new GridLayout(2, 2, 8, 8));
-        formPanel.add(new JLabel("分類："));
-        formPanel.add(categoryComboBox);
-        formPanel.add(new JLabel("名稱："));
-        formPanel.add(nameField);
-        return formPanel;
+    // 刪除會員。
+    // 刪除前先確認，確認後從 members 清單移除。
+    private void deleteMember(JTable memberTable, DefaultTableModel memberTableModel, String[] columns) {
+        Member member = getSelectedMember(memberTable);
+        if (member == null) {
+            return;
+        }
+
+        int result = JOptionPane.showConfirmDialog(this,
+                "確認刪除會員「" + member.getDisplayName() + "」？",
+                "刪除會員",
+                JOptionPane.YES_NO_OPTION);
+        if (result != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        members.remove(member);
+        reloadMemberTable(memberTableModel, columns);
+        JOptionPane.showMessageDialog(this, "刪除會員執行成功");
     }
+
+    // 登入按鈕事件。
+    // 先檢查帳密是否空白，再用 members 清單比對帳號密碼。
+    private void login() {
+        String account = accountField.getText().trim();
+        String password = new String(passwordField.getPassword());
+        if (account.isEmpty()) {
+            loginMessageLabel.setText("請輸入帳號");
+            return;
+        }
+
+        if (password.isEmpty()) {
+            loginMessageLabel.setText("請輸入密碼");
+            return;
+        }
+
+        Member member = findMember(account, password);
+        if (member != null) {
+            showMainPage(member);
+            return;
+        }
+
+        loginMessageLabel.setText("帳號或密碼錯誤，請使用假資料登入");
+    }
+
+    // 登入成功後切換到主畫面。
+    // admin 會看到會員管理與書類管理，一般會員只看到借還書。
+    private void showMainPage(Member member) {
+        currentMember = member;
+        currentUserLabel.setText("目前身分：" + member.getAccount() + getMemberRoleDisplayText(member));
+        resetMainTabs(member.isAdmin());
+        mainTabs.setSelectedIndex(0);
+        cardLayout.show(rootPanel, MAIN_CARD);
+    }
+
+    // 登出事件。
+    // 清空登入欄位、重設目前會員，並切回登入頁。
+    private void logout() {
+        accountField.setText("");
+        passwordField.setText("");
+        loginMessageLabel.setText("已登出，請重新登入");
+        currentUserLabel.setText("目前身分：未登入");
+        currentMember = null;
+        cardLayout.show(rootPanel, LOGIN_CARD);
+    }
+
+    // 根據是否為 admin 重新建立可見分頁。
+    // 先保留第一個借還書分頁，再依權限決定是否加入管理分頁。
+    private void resetMainTabs(boolean admin) {
+        while (mainTabs.getTabCount() > 1) {
+            mainTabs.removeTabAt(1);
+        }
+
+        if (admin) {
+            mainTabs.addTab("會員管理", createMemberManageTab());
+            mainTabs.addTab("書類管理", createBookTypeManageTab());
+        }
+    }
+
+    // ============================================================
+    // 資料與工具方法區
+    // ============================================================
+
+
+    // 初始化假會員資料。
+    // passwordHash 在這個 II 畫面版先放明碼，主要用來示範登入流程。
+    private void initMembers() {
+        members.add(new Member(1, "admin", "管理員", "admin123", true));
+        members.add(new Member(2, "aa", "AA會員", "aa123", false));
+    }
+
+    // 初始化分類資料。現在分類只保留 id 與 name，不再使用 code。
+    private void initCategories() {
+        categories.add(new Category(1, "小說類"));
+        categories.add(new Category(2, "程式類"));
+    }
+
+    // 初始化子分類資料。
+    // categoryId 用來表示這個子分類屬於哪個分類。
+    private void initItems() {
+        items.add(new Item(1, 2, "Java"));
+        items.add(new Item(2, 2, "Python"));
+        items.add(new Item(3, 1, "奇幻"));
+        items.add(new Item(4, 1, "歷史"));
+    }
+
+    // 初始化書籍資料。
+    // Book 內同時放 categoryId/itemId 與分類名稱/子分類名稱，方便畫面表格直接顯示。
+    private void initBooks() {
+        books.add(new Book("1", "Java入門", "張三", false, members.get(0).getDisplayName(), 2, 2, 1, "程式類", "Java"));
+        books.add(new Book("2", "Python程式設計", "王五", true, "", 0, 2, 2, "程式類", "Python"));
+        books.add(new Book("3", "哈利波特", "J.K.Rowling", true, "", 0, 1, 3, "小說類", "奇幻"));
+        books.add(new Book("4", "達文西密碼", "丹布朗", true, "", 0, 1, 4, "小說類", "歷史"));
+    }
+
+    // 專案名稱 = 專案主名稱 + 版本號。
+    // 例如 librarySystemPlus + II = librarySystemPlusII。
+    private String getProjectName() {
+        return projectTitle + projectVersion;
+    }
+
+    // 將 categories 轉成 JComboBox 選項。
+    // 第一個固定放「全部」，後面才是每個分類名稱。
+    private String[] buildCategoryOptions() {
+        String[] options = new String[categories.size() + 1];
+        options[0] = "全部";
+        for (int i = 0; i < categories.size(); i++) {
+            options[i + 1] = categories.get(i).getName();
+        }
+        return options;
+    }
+
+    // 將 books 轉成借還書表格使用的二維陣列。
+    // JTable 的 DefaultTableModel 需要 Object[][] 當作資料列。
+    private Object[][] buildBookTableData() {
+        Object[][] data = new Object[books.size()][7];
+        for (int i = 0; i < books.size(); i++) {
+            Book book = books.get(i);
+            data[i][0] = book.getNumber();
+            data[i][1] = book.getTitle();
+            data[i][2] = book.getAuthor();
+            data[i][3] = findCategoryName(book.getCategoryId());
+            data[i][4] = findItemName(book.getItemId());
+            data[i][5] = book.isAvailable() ? "可借閱" : "已借出";
+            data[i][6] = book.getBorrowUser();
+        }
+        return data;
+    }
+
+    // 將 books 轉成書籍管理表格資料。
+    // 管理頁不需要顯示狀態與借閱人，所以欄位比借還書頁少。
+    private Object[][] buildBookManageTableData() {
+        Object[][] data = new Object[books.size()][5];
+        for (int i = 0; i < books.size(); i++) {
+            Book book = books.get(i);
+            data[i][0] = book.getNumber();
+            data[i][1] = book.getTitle();
+            data[i][2] = book.getAuthor();
+            data[i][3] = findCategoryName(book.getCategoryId());
+            data[i][4] = findItemName(book.getItemId());
+        }
+        return data;
+    }
+
+    // 將 categories 轉成分類管理表格資料。
+    private Object[][] buildCategoryTableData() {
+        Object[][] data = new Object[categories.size()][2];
+        for (int i = 0; i < categories.size(); i++) {
+            Category category = categories.get(i);
+            data[i][0] = category.getId();
+            data[i][1] = category.getName();
+        }
+        return data;
+    }
+
+    // 將 members 轉成會員管理表格資料。
+    private Object[][] buildMemberTableData() {
+        Object[][] data = new Object[members.size()][4];
+        for (int i = 0; i < members.size(); i++) {
+            Member member = members.get(i);
+            data[i][0] = member.getId();
+            data[i][1] = member.getAccount();
+            data[i][2] = member.getDisplayName();
+            data[i][3] = member.isAdmin() ? "是" : "否";
+        }
+        return data;
+    }
+
+    // 將 items 轉成子分類管理表格資料。
+    private Object[][] buildItemTableData() {
+        Object[][] data = new Object[items.size()][3];
+        for (int i = 0; i < items.size(); i++) {
+            Item item = items.get(i);
+            data[i][0] = item.getId();
+            data[i][1] = item.getCategoryId();
+            data[i][2] = item.getName();
+        }
+        return data;
+    }
+
+    // 計算借還書頁下方統計文字。
+    // 因為資料都在 books 裡，所以統計也直接從 books 計算。
+    private String buildBookSummaryText() {
+        int availableCount = 0;
+        for (Book book : books) {
+            if (book.isAvailable()) {
+                availableCount++;
+            }
+        }
+
+        return "目前共有：" + books.size() + " 本書 可借閱：" + availableCount + " 本 已借出："
+                + (books.size() - availableCount) + " 本";
+    }
+
+    // 用 categoryId 找分類名稱，讓表格可以顯示中文分類。
+    private String findCategoryName(int categoryId) {
+        for (Category category : categories) {
+            if (category.getId() == categoryId) {
+                return category.getName();
+            }
+        }
+
+        return "";
+    }
+
+    // 用 itemId 找子分類名稱，讓表格可以顯示子分類。
+    private String findItemName(int itemId) {
+        for (Item item : items) {
+            if (item.getId() == itemId) {
+                return item.getName();
+            }
+        }
+
+        return "";
+    }
+
+    // 新增書籍。
+    // 使用 JOptionPane.showConfirmDialog 顯示表單，按 OK 後才把資料加入 books。
 
     // 建立分類下拉選單的顯示文字。
     // 格式是「id - name」，後續 parseId 可以把 id 取出來。
@@ -1299,136 +1512,6 @@ public class LibrarySystemFrame extends JFrame {
 
     // 新增會員。
     // 表單包含帳號、顯示姓名、密碼、是否管理員。
-    private void addMember(DefaultTableModel memberTableModel, String[] columns) {
-        JTextField accountTextField = new JTextField(12);
-        JTextField displayNameTextField = new JTextField(12);
-        JPasswordField passwordTextField = new JPasswordField(12);
-        JCheckBox adminCheckBox = new JCheckBox("管理員");
-
-        JPanel formPanel = new JPanel(new GridLayout(4, 2, 8, 8));
-        formPanel.add(new JLabel("帳號："));
-        formPanel.add(accountTextField);
-        formPanel.add(new JLabel("顯示姓名："));
-        formPanel.add(displayNameTextField);
-        formPanel.add(new JLabel("密碼："));
-        formPanel.add(passwordTextField);
-        formPanel.add(new JLabel("是否管理員："));
-        formPanel.add(adminCheckBox);
-
-        int result = JOptionPane.showConfirmDialog(this, formPanel, "新增會員", JOptionPane.OK_CANCEL_OPTION);
-        if (result != JOptionPane.OK_OPTION) {
-            return;
-        }
-
-        String account = accountTextField.getText().trim();
-        String displayName = displayNameTextField.getText().trim();
-        String password = new String(passwordTextField.getPassword());
-        if (account.isEmpty() || displayName.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "帳號、顯示姓名、密碼都必填");
-            return;
-        }
-
-        if (findMemberByAccount(account) != null) {
-            JOptionPane.showMessageDialog(this, "帳號已存在");
-            return;
-        }
-
-        members.add(new Member(getNextMemberId(), account, displayName, password, adminCheckBox.isSelected()));
-        reloadMemberTable(memberTableModel, columns);
-        JOptionPane.showMessageDialog(this, "新增會員執行成功");
-    }
-
-    // 修改會員基本資料。
-    // 密碼不在這裡修改，密碼由 updateMemberPassword 專門負責。
-    private void updateMemberInfo(JTable memberTable, DefaultTableModel memberTableModel, String[] columns) {
-        Member member = getSelectedMember(memberTable);
-        if (member == null) {
-            return;
-        }
-
-        JTextField accountTextField = new JTextField(member.getAccount(), 12);
-        JTextField displayNameTextField = new JTextField(member.getDisplayName(), 12);
-        JCheckBox adminCheckBox = new JCheckBox("管理員", member.isAdmin());
-
-        JPanel formPanel = new JPanel(new GridLayout(3, 2, 8, 8));
-        formPanel.add(new JLabel("帳號："));
-        formPanel.add(accountTextField);
-        formPanel.add(new JLabel("顯示姓名："));
-        formPanel.add(displayNameTextField);
-        formPanel.add(new JLabel("是否管理員："));
-        formPanel.add(adminCheckBox);
-
-        int result = JOptionPane.showConfirmDialog(this, formPanel, "修改會員資料", JOptionPane.OK_CANCEL_OPTION);
-        if (result != JOptionPane.OK_OPTION) {
-            return;
-        }
-
-        String account = accountTextField.getText().trim();
-        String displayName = displayNameTextField.getText().trim();
-        if (account.isEmpty() || displayName.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "帳號、顯示姓名都必填");
-            return;
-        }
-
-        Member sameAccountMember = findMemberByAccount(account);
-        if (sameAccountMember != null && sameAccountMember.getId() != member.getId()) {
-            JOptionPane.showMessageDialog(this, "帳號已存在");
-            return;
-        }
-
-        replaceMember(new Member(member.getId(), account, displayName, member.getPasswordHash(), adminCheckBox.isSelected()));
-        reloadMemberTable(memberTableModel, columns);
-        JOptionPane.showMessageDialog(this, "修改會員資料執行成功");
-    }
-
-    // 修改會員密碼。
-    // 這裡只更新 passwordHash 欄位，其它會員資料維持不變。
-    private void updateMemberPassword(JTable memberTable) {
-        Member member = getSelectedMember(memberTable);
-        if (member == null) {
-            return;
-        }
-
-        JPasswordField passwordTextField = new JPasswordField(12);
-        JPanel formPanel = new JPanel(new GridLayout(1, 2, 8, 8));
-        formPanel.add(new JLabel("新密碼:"));
-        formPanel.add(passwordTextField);
-
-        int result = JOptionPane.showConfirmDialog(this, formPanel, "修改會員密碼", JOptionPane.OK_CANCEL_OPTION);
-        if (result != JOptionPane.OK_OPTION) {
-            return;
-        }
-
-        String password = new String(passwordTextField.getPassword());
-        if (password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "新密碼必填");
-            return;
-        }
-
-        replaceMember(new Member(member.getId(), member.getAccount(), member.getDisplayName(), password, member.isAdmin()));
-        JOptionPane.showMessageDialog(this, "修改會員密碼執行成功");
-    }
-
-    // 刪除會員。
-    // 刪除前先確認，確認後從 members 清單移除。
-    private void deleteMember(JTable memberTable, DefaultTableModel memberTableModel, String[] columns) {
-        Member member = getSelectedMember(memberTable);
-        if (member == null) {
-            return;
-        }
-
-        int result = JOptionPane.showConfirmDialog(this,
-                "確認刪除會員「" + member.getDisplayName() + "」？",
-                "刪除會員",
-                JOptionPane.YES_NO_OPTION);
-        if (result != JOptionPane.YES_OPTION) {
-            return;
-        }
-
-        members.remove(member);
-        reloadMemberTable(memberTableModel, columns);
-        JOptionPane.showMessageDialog(this, "刪除會員執行成功");
-    }
 
     // 從會員表格取得目前選取的 Member。
     private Member getSelectedMember(JTable memberTable) {
@@ -1496,27 +1579,6 @@ public class LibrarySystemFrame extends JFrame {
 
     // 登入按鈕事件。
     // 先檢查帳密是否空白，再用 members 清單比對帳號密碼。
-    private void login() {
-        String account = accountField.getText().trim();
-        String password = new String(passwordField.getPassword());
-        if (account.isEmpty()) {
-            loginMessageLabel.setText("請輸入帳號");
-            return;
-        }
-
-        if (password.isEmpty()) {
-            loginMessageLabel.setText("請輸入密碼");
-            return;
-        }
-
-        Member member = findMember(account, password);
-        if (member != null) {
-            showMainPage(member);
-            return;
-        }
-
-        loginMessageLabel.setText("帳號或密碼錯誤，請使用假資料登入");
-    }
 
     // 從 members 清單尋找符合帳號密碼的會員。
     private Member findMember(String account, String password) {
@@ -1538,40 +1600,7 @@ public class LibrarySystemFrame extends JFrame {
     // 回傳畫面右上角要顯示的角色文字，包含括號。
     // 例如：（管理員）、（一般會員）。
     private String getMemberRoleDisplayText(Member member) {
-        return "（" + getMemberRoleName(member) + "）";
+        return "(" + getMemberRoleName(member) + ")";
     }
 
-    // 登入成功後切換到主畫面。
-    // admin 會看到會員管理與書類管理，一般會員只看到借還書。
-    private void showMainPage(Member member) {
-        currentMember = member;
-        currentUserLabel.setText("目前身分：" + member.getAccount() + getMemberRoleDisplayText(member));
-        resetMainTabs(member.isAdmin());
-        mainTabs.setSelectedIndex(0);
-        cardLayout.show(rootPanel, MAIN_CARD);
-    }
-
-    // 登出事件。
-    // 清空登入欄位、重設目前會員，並切回登入頁。
-    private void logout() {
-        accountField.setText("");
-        passwordField.setText("");
-        loginMessageLabel.setText("已登出，請重新登入");
-        currentUserLabel.setText("目前身分：未登入");
-        currentMember = null;
-        cardLayout.show(rootPanel, LOGIN_CARD);
-    }
-
-    // 根據是否為 admin 重新建立可見分頁。
-    // 先保留第一個借還書分頁，再依權限決定是否加入管理分頁。
-    private void resetMainTabs(boolean admin) {
-        while (mainTabs.getTabCount() > 1) {
-            mainTabs.removeTabAt(1);
-        }
-
-        if (admin) {
-            mainTabs.addTab("會員管理", createMemberManageTab());
-            mainTabs.addTab("書類管理", createBookTypeManageTab());
-        }
-    }
 }

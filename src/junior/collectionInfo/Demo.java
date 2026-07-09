@@ -178,24 +178,24 @@ public class Demo {
         // 比對使用泛型的寫法
         // List<String> list = new ArrayList<>();
 
-        List list = new ArrayList();
-        list.add("apple");
-        list.add(100);
-        list.add(true);
+        // List list = new ArrayList();
+        // list.add("apple");
+        // list.add(100);
+        // list.add(true);
 
-        System.out.println(list);
+        // System.out.println(list);
 
-        // 要使用原本型別，必須自己強制轉型。
-        String fruit = (String) list.get(0);
+        // // 要使用原本型別，必須自己強制轉型。
+        // String fruit = (String) list.get(0);
 
-        Integer number = (Integer) list.get(1); // 正確的轉型接回值
-        // String number = (String) list.get(1); // 錯誤的轉型接回值
+        // Integer number = (Integer) list.get(1); // 正確的轉型接回值
+        // // String number = (String) list.get(1); // 錯誤的轉型接回值
 
-        Boolean flag = (Boolean) list.get(2);
-        System.out.println("================ 未使用泛型 ================");
-        System.out.println("fruit: " + fruit);
-        System.out.println("number: " + number);
-        System.out.println("flag: " + flag);
+        // Boolean flag = (Boolean) list.get(2);
+        // System.out.println("================ 未使用泛型 ================");
+        // System.out.println("fruit: " + fruit);
+        // System.out.println("number: " + number);
+        // System.out.println("flag: " + flag);
 
         /*
          * 為了解決混合型別與強制轉型問題，可以使用泛型。

@@ -89,6 +89,7 @@ public class Demo {
             System.out.println(n);
             count++;
         }
+        System.out.println(count);
 
         // 1 -> 5
         // 取決於i++ or i=i+2 or i=i+3

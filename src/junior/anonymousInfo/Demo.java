@@ -1,7 +1,5 @@
 package junior.anonymousInfo;
 
-import javax.swing.text.View;
-
 public class Demo {
     public static void main(String[] args) {
         // 匿名類別(Anonymous Class)介紹
