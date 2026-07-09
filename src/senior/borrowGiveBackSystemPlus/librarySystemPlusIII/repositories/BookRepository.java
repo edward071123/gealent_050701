@@ -23,7 +23,7 @@ public class BookRepository extends BaseRepository {
         List<Book> books = new ArrayList<>();
 
         String bookSql = "SELECT id, title, author, available, borrow_member_id, category_id, item_id FROM books ORDER BY id";
-        String categorySql = "SELECT code, name FROM categories WHERE id = ?";
+        String categorySql = "SELECT name FROM categories WHERE id = ?";
         String itemSql = "SELECT name FROM items WHERE id = ? AND category_id = ?";
         String memberSql = "SELECT account FROM members WHERE id = ?";
 
@@ -54,7 +54,7 @@ public class BookRepository extends BaseRepository {
 
     public List<Category> loadCategories() throws Exception {
         List<Category> categories = new ArrayList<>();
-        String sql = "SELECT id, code, name FROM categories ORDER BY id";
+        String sql = "SELECT id, name FROM categories ORDER BY id";
 
         try (
                 Connection connection = new DBConnection().getConnection();
@@ -62,7 +62,7 @@ public class BookRepository extends BaseRepository {
                 ResultSet rs = ps.executeQuery();
             ) {
             while (rs.next()) {
-                categories.add(new Category(rs.getInt("id"), rs.getString("code"), rs.getString("name")));
+                categories.add(new Category(rs.getInt("id"), rs.getString("name")));
             }
         }
 
@@ -106,14 +106,14 @@ public class BookRepository extends BaseRepository {
         }
     }
 
-    public void addCategory(String code, String name) throws Exception {
-        String sql = "INSERT INTO categories (code, name) VALUES (?, ?)";
-        executeUpdate(sql, code, name);
+    public void addCategory(String name) throws Exception {
+        String sql = "INSERT INTO categories (name) VALUES (?)";
+        executeUpdate(sql, name);
     }
 
-    public void updateCategory(int id, String code, String name) throws Exception {
-        String sql = "UPDATE categories SET code = ?, name = ? WHERE id = ?";
-        executeUpdate(sql, code, name, id);
+    public void updateCategory(int id, String name) throws Exception {
+        String sql = "UPDATE categories SET name = ? WHERE id = ?";
+        executeUpdate(sql, name, id);
     }
 
     public void deleteCategory(int id) throws Exception {
@@ -157,11 +157,11 @@ public class BookRepository extends BaseRepository {
 
         try (ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
-                return new Category(categoryId, rs.getString("code"), rs.getString("name"));
+                return new Category(categoryId, rs.getString("name"));
             }
         }
 
-        return new Category(categoryId, "", "");
+        return new Category(categoryId, "");
     }
 
     private Item findItem(PreparedStatement ps, int itemId, int categoryId) throws Exception {
@@ -204,7 +204,6 @@ public class BookRepository extends BaseRepository {
                 rs.getInt("borrow_member_id"),
                 rs.getInt("category_id"),
                 rs.getInt("item_id"),
-                category.getCode(),
                 category.getName(),
                 item.getName());
     }

@@ -9,12 +9,11 @@ public class Book {
     private int borrowMemberId;
     private int categoryId;
     private int itemId;
-    private String categoryCode;
     private String categoryName;
     private String itemName;
 
     public Book(String number, String title, String author, boolean available, String borrowUser, int borrowMemberId,
-            int categoryId, int itemId, String categoryCode, String categoryName, String itemName) {
+            int categoryId, int itemId, String categoryName, String itemName) {
         this.number = number;
         this.title = title;
         this.author = author;
@@ -23,13 +22,8 @@ public class Book {
         this.borrowMemberId = borrowMemberId;
         this.categoryId = categoryId;
         this.itemId = itemId;
-        this.categoryCode = categoryCode;
         this.categoryName = categoryName;
         this.itemName = itemName;
-    }
-
-    public String getCode() {
-        return this.categoryCode;
     }
 
     public String getNumber() {
@@ -69,7 +63,7 @@ public class Book {
     }
 
     public String toFileSting() {
-        return getCode() + "," + getNumber() + "," + getTitle() + "," + getAuthor() + "," + isAvailable() + ","
+        return getNumber() + "," + getTitle() + "," + getAuthor() + "," + isAvailable() + ","
                 + getExtraInfo() + "," + getBorrowUser();
     }
 
@@ -78,16 +72,16 @@ public class Book {
                 + "書名：" + getTitle() + "\n"
                 + "作者：" + getAuthor() + "\n"
                 + "類型：" + this.categoryName + "\n"
-                + getItemLabel() + "：" + getExtraInfo() + "\n"
+                + getItemLabel(this.itemName) + "：" + getExtraInfo() + "\n"
                 + "可借：" + (isAvailable() ? "可" : "已被" + borrowUser + "借走");
     }
 
-    private String getItemLabel() {
-        if (this.categoryCode.equals("programming")) {
+    private String getItemLabel(String itemName) {
+        if (itemName.equals("Java") || itemName.equals("Python")) {
             return "語言";
         }
 
-        if (this.categoryCode.equals("novel")) {
+        if (itemName.equals("奇幻") || itemName.equals("歷史")) {
             return "分類";
         }
 

@@ -11,9 +11,7 @@ DROP TABLE IF EXISTS categories;
 
 CREATE TABLE IF NOT EXISTS categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    code VARCHAR(50) NOT NULL,
-    name VARCHAR(50) NOT NULL,
-    UNIQUE KEY uk_categories_code (code)
+    name VARCHAR(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS items (
@@ -63,11 +61,10 @@ CREATE TABLE IF NOT EXISTS books (
         ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO categories (id, code, name) VALUES
-    (1, 'novel', '小說類'),
-    (2, 'programming', '程式類')
+INSERT INTO categories (id, name) VALUES
+    (1, '小說類'),
+    (2, '程式類')
 ON DUPLICATE KEY UPDATE
-    code = VALUES(code),
     name = VALUES(name);
 
 INSERT INTO items (id, category_id, name) VALUES

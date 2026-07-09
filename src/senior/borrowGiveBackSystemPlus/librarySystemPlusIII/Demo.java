@@ -156,20 +156,16 @@ public class Demo {
         String choice = sc.nextLine();
 
         if (choice.equals("1")) {
-            System.out.print("分類代碼：");
-            String code = sc.nextLine();
             System.out.print("分類名稱：");
             String name = sc.nextLine();
-            service.addCategory(currentMember, code, name);
+            service.addCategory(currentMember, name);
             System.out.println("新增分類成功");
         } else if (choice.equals("2")) {
             System.out.print("分類ID：");
             int id = Integer.parseInt(sc.nextLine());
-            System.out.print("分類代碼：");
-            String code = sc.nextLine();
             System.out.print("分類名稱：");
             String name = sc.nextLine();
-            service.updateCategory(currentMember, id, code, name);
+            service.updateCategory(currentMember, id, name);
             System.out.println("修改分類成功");
         } else if (choice.equals("3")) {
             System.out.print("分類ID：");
@@ -279,7 +275,7 @@ public class Demo {
     private static void printCategoryInfo(List<Category> categories) {
         System.out.println("===== 分類列表 =====");
         for (Category category : categories) {
-            System.out.println(category.getId() + ". " + category.getCode() + " / " + category.getName());
+            System.out.println(category.getId() + ". " + category.getName());
         }
     }
 

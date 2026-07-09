@@ -118,18 +118,16 @@ public class LibraryService implements IBorrowGiveBack<Member> {
         memberRepository.deleteMember(id);
     }
 
-    public void addCategory(Member currentMember, String code, String name) throws Exception {
+    public void addCategory(Member currentMember, String name) throws Exception {
         checkAdmin(currentMember);
-        checkNotEmpty(code, "分類代碼");
         checkNotEmpty(name, "分類名稱");
-        repository.addCategory(code, name);
+        repository.addCategory(name);
     }
 
-    public void updateCategory(Member currentMember, int id, String code, String name) throws Exception {
+    public void updateCategory(Member currentMember, int id, String name) throws Exception {
         checkAdmin(currentMember);
-        checkNotEmpty(code, "分類代碼");
         checkNotEmpty(name, "分類名稱");
-        repository.updateCategory(id, code, name);
+        repository.updateCategory(id, name);
     }
 
     public void deleteCategory(Member currentMember, int id) throws Exception {
