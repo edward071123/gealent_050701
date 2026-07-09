@@ -5,12 +5,21 @@ import java.util.List;
 
 import senior.borrowGiveBackSystem.main.IBorrowGiveBack;
 
+/*
+    models:         db的table     => Book.java
+    repostories :   操作資料庫     => BookRepository.java
+    services:       共同邏輯(共用的功能)       => LibraryService.java
+*/
+
+
+
 public class LibraryService implements IBorrowGiveBack {
     private BookRepository repository;
     private List<Book> books;
 
     public LibraryService(String dataFilePath) throws Exception {
         this.repository = new BookRepository(dataFilePath);
+        // 讀取全部的書
         books = repository.loadBooks();
     }
 
@@ -31,13 +40,14 @@ public class LibraryService implements IBorrowGiveBack {
             throw new Exception("借閱人姓名不能為NULL");
         }
         // 2. 根據number 須取得"目標書"的物件 => 檢查是否已被借走
-        Book targetBook = checkBook(number);
+        Book targetBook = checkBook(number);  // SELECT * FROM books WHERE id = number;
 
         // 3. 有被借走的話要回傳: 已被xxx借走
         if (!targetBook.isAvailable()) {
             return "編號: " + number + ",書名: " + targetBook.getTitle() + " 已被" + targetBook.getBorrowUser() + "借走";
         }
 
+        // UPDATE books SET column1 = value1, column2 = value2, ...WHERE id = number;
         // 4. 沒被借走的話更改資料狀態(available:false, borrowUser)且回傳: 借閱 xx編號 xx書 成功
         targetBook.setAvailable(false);
         targetBook.setBorrowUser(borrowUser);
