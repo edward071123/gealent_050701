@@ -15,12 +15,13 @@ public class Demo {
 
         // 2.
         // 建立db/book.txt 內容如下面四行
+        // 大分類,編號,書名,作者,是否已被借,小分類,被誰借走
         // P,1,Java入門,張三,false,Java,aa
         // P,2,Python程式設計,王五,true,Python,NULL
         // N,3,哈利波特,J.K.Rowling,true,奇幻,NULL
         // N,4,達文西密碼,丹布朗,true,歷史,NULL
 
-        // 3.
+        // 3. 為了建立一個書的物件(object), 所以必須建立以下類別
         // 建立Book.java 有以下屬性, 且有getter, setter
         // String type(種類) => 預設B, getType() 方法 => 回傳B
         // int number (編號)
@@ -44,7 +45,30 @@ public class Demo {
 
         // 覆寫 getType() 方法 => 回傳N
         // 建立建構子傳入以上屬性的資料進來
-        //
+
+        // 6. 把  (想像一下 Demo.java的 main(程式進入點是銀行大廳), 要引導到LibraryService.java這棟大樓的, 三個小房間為窗口)
+        // (1). 查看所有書籍 getAllBooks()
+        // (2). 借書 borrow()
+        // (3). 還書 giveBack()
+        // 獨立為一個類別(LibraryService.java)的三個方法去讓main 物件化後呼叫
+
+        // 7. 
+        // 借的流程
+        // (1). 檢查傳入的borrowUser資料是不是為空
+        // (2). 取得目標書籍
+        // (3). 檢查是否被借走, 如果已被借走 => 回傳已被借走, 目前無法被借
+        // (4). 沒被借 => 更改資料庫狀態(寫入資料庫)
+
+        // 8. 
+        // 還的流程
+        // (1). 取得目標書籍
+        // (2). 檢查是否被借走, 如果沒被借走 => 回傳沒被借走, 所以無需改狀態
+        // (3). 已被借 => 更改資料庫狀態(寫入資料庫)
+
+        // 9. 
+        // 寫出以下針對資料庫的操作(BookRepository.java)
+        // 查詢所有書 => 讀取
+        // 借書,還書 => 寫入
 
         /*
             librarySystem
@@ -60,6 +84,12 @@ public class Demo {
                     ├── BookRepository.java (針對資料庫的操作行為)
                     └── LibraryService.java (商業邏輯的內容)
         */
+
+        // 1. Demo.java => new LibraryService() 
+        
+        // 2. LibraryService.java => public LibraryService(String dataFilePath) 
+  
+        // 3. BookRepository.java => loadBooks(); => 讀取全部的書
         
         boolean working = true; // true 可以一直在系統內運行, false 代表離開系統
 
