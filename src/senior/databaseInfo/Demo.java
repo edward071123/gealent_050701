@@ -19,7 +19,7 @@ public class Demo {
             StudentRepository repository = new StudentRepository();
             
 
-            // repository.findAll();
+            repository.findAll();
 
             // 課堂練習: 請大家設計一個findOne(int id) : 查詢單一同學
             // repository.findOne(2);
