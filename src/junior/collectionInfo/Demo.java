@@ -65,27 +65,31 @@ public class Demo {
          * 但是取出資料時，Java 只知道它是 Object。
          * 要使用原本的型別，就必須自己進行強制轉型。
          */
-        List list = new ArrayList();
+        System.out.println("================ 沒有泛型 開始 ================");
+        
+        // List list = new ArrayList();
 
-        list.add("Tom");
-        list.add(100);
-        list.add(true);
+        // list.add("Tom");
+        // list.add(100);
+        // list.add(true);
 
-        System.out.println("================ 沒有泛型 ================");
-        System.out.println(list);
+        
+        // System.out.println(list);
 
-        // 沒有泛型時，取出的資料型別是 Object。
-        Object data = list.get(0);
-        System.out.println("Object 資料：" + data);
+        // // 沒有泛型時，取出的資料型別是 Object。
+        // Object data = list.get(0);
+        // System.out.println("Object 資料：" + data);
 
-        // 要使用原本型別，必須自己強制轉型。
-        String name = (String) list.get(0);
-        Integer number = (Integer) list.get(1);
-        Boolean result = (Boolean) list.get(2);
+        // // 要使用原本型別，必須自己強制轉型。
+        // String name = (String) list.get(0);
+        // Integer number = (Integer) list.get(1);
+        // Boolean result = (Boolean) list.get(2);
 
-        System.out.println("姓名：" + name);
-        System.out.println("數字：" + number);
-        System.out.println("布林值：" + result);
+        // System.out.println("姓名：" + name);
+        // System.out.println("數字：" + number);
+        // System.out.println("布林值：" + result);
+
+        System.out.println("================ 沒有泛型 結束 ================");
 
         // 如果轉成錯誤的型別，會發生 ClassCastException。
         // String error = (String) list.get(1);
