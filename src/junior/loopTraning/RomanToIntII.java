@@ -1,4 +1,4 @@
-package junior.loopInfo;
+package junior.loopTraning;
 
 public class RomanToIntII {
     public static void main(String[] args) {

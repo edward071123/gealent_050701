@@ -1,103 +1,139 @@
 package senior.uploadImage.basic;
 
-import javax.swing.*;
 import java.awt.*;
-import java.io.*;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import java.io.*;
+
 public class SwingDemo {
+    /*
+    * 畫面佈局簡圖：
+    *
+    * BorderLayout 會把畫面分成 5 個區域：
+    *
+    * +---------------------------+
+    * |          NORTH            |
+    * +-------+-----------+-------+
+    * | WEST  |  CENTER   | EAST  |
+    * |       |           |       |
+    * +-------+-----------+-------+
+    * |          SOUTH            |
+    * +---------------------------+
+    *
+    * 本程式實際放置的元件：
+    *
+    * JFrame
+    * +-------------------------------------------------------------------+
+    * | topPanel                                                          |
+    * | +--------------+--------------------------------+---------------+ |
+    * | | uploadButton | infoPanel                      | refreshButton | |
+    * | |              | statusLabel + fileSizeLabel    |               | |
+    * | +--------------+--------------------------------+---------------+ |
+    * +------------------------+------------------------------------------+
+    * | splitPane              |                                          |
+    * | +--------------------+ | +--------------------------------------+ |
+    * | | listScrollPane     | | | imageScrollPane                      | |
+    * | | imageList          | | | imageLabel                           | |
+    * | | - d1.jpg           | | |                                      | |
+    * | | - d2.jpg           | | |                                      | |
+    * | +--------------------+ | +--------------------------------------+ |
+    * +------------------------+------------------------------------------+
+    * | progressBar                                                       |
+    * | [ 0% ----------------------------------------------------- 100% ] |
+    * +-------------------------------------------------------------------+
+    *
+    * BorderLayout.NORTH  ：上方工具列 topPanel
+    * BorderLayout.CENTER ：中間左右分割 splitPane
+    * BorderLayout.SOUTH  ：下方進度條 progressBar
+    * splitPane 左邊      ：圖片清單 imageList
+    * splitPane 右邊      ：圖片預覽 imageLabel
+    */
     public static void main(String[] args) {
+        // 把工作丟給Swing的UI執行緒
         SwingUtilities.invokeLater(() -> {
-            // 建立主視窗。
+            // 建立主視窗
             new Frame();
         });
-    }
 
+    }
 }
 
 class Frame extends JFrame {
-
-    private final File uploadDir = new File("src/senior/uploadImage/uploads");
-    // 畫面上的主要元件。
-    // JLabel：單純顯示文字或圖片。
-    private JLabel statusLabel = new JLabel("狀態：尚未選擇圖片");
-    private JLabel fileSizeLabel = new JLabel("大小：-");
-    private JLabel imageLabel = new JLabel("尚未選擇圖片", SwingConstants.CENTER);
-
-    // JButton：使用者可以點擊的按鈕。
-    private JButton uploadButton = new JButton("上傳圖片");
-    private JButton refreshButton = new JButton("重新整理");
-
-    private JProgressBar progressBar = new JProgressBar(0, 100);
-
-    // DefaultListModel：清單資料來源，負責保存要顯示的 File。
-    // JList：真正畫在畫面上的清單元件。
-    private DefaultListModel<File> imageListModel = new DefaultListModel<>();
-    private JList<File> imageList = new JList<>(imageListModel);
+    
+    DefaultListModel<File> imageListModel;
+    JLabel statusLabel;
+    JLabel fileSizeLabel;
+    JLabel imageLabel;
+    JProgressBar progressBar;
 
     public Frame() {
-        // 視窗基本設定。
-        // setTitle：視窗標題。
-        // setSize：視窗寬高。
-        // setDefaultCloseOperation：按關閉按鈕時結束程式。
-        // setLocationRelativeTo(null)：讓視窗出現在螢幕中央。
-        setTitle("圖片上傳與瀏覽 - swing - 單檔");
-        setSize(950, 650);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+        // ========================畫面 起始================================
+        // 範例互動網站:
+        // https://edward071123.github.io/gealent_050701/src/senior/uploadImage/basic/swing-demo.html
 
-        // 進度條設定。
-        // setStringPainted(true)：讓進度條顯示 0%、50%、100% 這種文字。
-        progressBar.setStringPainted(true);
-        progressBar.setValue(0);
-        progressBar.setString("0%");
+        // Frame 基本設定
+        settingFrame();
 
+        //=================topPanel區塊的元件 起始============================
+        JButton uploadButton = new JButton("上傳圖片");
+
+        statusLabel = new JLabel("狀態：尚未選擇圖片");
+        fileSizeLabel = new JLabel("大小：-");
+        // GridLayout(列數, 欄數, 水平間距, 垂直間距)
+        /* 
+        * | +--------------+--------------------------------+ |
+        * | | statusLabel  | fileSizeLabel                  | |
+        * | +--------------+--------------------------------+ |
+        */
         JPanel infoPanel = new JPanel(new GridLayout(1, 2, 12, 0));
         infoPanel.add(statusLabel);
         infoPanel.add(fileSizeLabel);
 
+        JButton refreshButton = new JButton("重新整理");
+
+        // BorderLayout(水平間距, 垂直間距)
         JPanel topPanel = new JPanel(new BorderLayout(8, 0));
-        topPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         topPanel.add(uploadButton, BorderLayout.WEST);
         topPanel.add(infoPanel, BorderLayout.CENTER);
         topPanel.add(refreshButton, BorderLayout.EAST);
+        //=================topPanel區塊的元件 結束=============================
 
-
-        // 左側圖片清單一次只能選一張。
-        imageList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        //=================splitPane區塊的元件 起始============================
+        // 左側圖片清單一次只能選一張
+        // DefaultListModel：清單資料來源，顯示uploads資料夾的 File。
+        // JScrollPane不是一般的JPanel，會有ScrollBar滾動所以不能用add加上去其他的元件
+        imageListModel = new DefaultListModel<>();
+        JList<File> imageList = new JList<>(imageListModel);
         JScrollPane listScrollPane = new JScrollPane(imageList);
-        listScrollPane.setPreferredSize(new Dimension(360, 0));
+        // listScrollPane.add(imageList); --> 錯誤用法
 
+        // 右邊的圖片顯示
+        imageLabel = new JLabel("尚未選擇圖片", SwingConstants.CENTER);
         JScrollPane imageScrollPane = new JScrollPane(imageLabel);
+        // listScrollPane.add(imageScrollPane); --> 錯誤用法
 
-        // JSplitPane：左右分割畫面。
+        // JSplitPane：左右分割畫面(因為兩個區塊)
         // HORIZONTAL_SPLIT 代表水平分割，也就是左邊一區、右邊一區。
-        JSplitPane splitPane = new JSplitPane(
-                JSplitPane.HORIZONTAL_SPLIT,
-                listScrollPane,
-                imageScrollPane);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        // 設定左右分割線的位置。 往左數字小，往右數字大
+        splitPane.setDividerLocation(160);
+        splitPane.add(listScrollPane);
+        splitPane.add(imageScrollPane);
+        //=================splitPane區塊的元件 結束===========================
 
-        // 設定左右分割線的位置。
-        splitPane.setDividerLocation(360);
+        //=================progressBar區塊的元件 起始=========================
+        progressBar = new JProgressBar(0, 100);
+        // 設定進度條上面畫文字上去顯示 0%、50%、100% 這種文字
+        progressBar.setStringPainted(true);
+        //=================progressBar區塊的元件 結束=========================
 
-        // JFrame 預設就是 BorderLayout。
-        // NORTH 放上方工具列，CENTER 放主要內容。
+        // 三大區塊分北中南 貼到 Frame
         add(topPanel, BorderLayout.NORTH);
         add(splitPane, BorderLayout.CENTER);
         add(progressBar, BorderLayout.SOUTH);
 
-        // 按鈕事件。
-        // addActionListener：設定按鈕被點擊後要執行什麼方法。
-        // 原始寫法
-        // uploadButton.addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         uploadImage();
-        //     }
-        // });
-        uploadButton.addActionListener(e -> uploadImage());
-        refreshButton.addActionListener(e -> loadUploadImages());
-
+        // 列表的自訂每一列怎麼顯示
         imageList.setCellRenderer((list, value, index, isSelected, cellHasFocus) -> {
             JLabel label = (JLabel) new DefaultListCellRenderer()
                     .getListCellRendererComponent(
@@ -107,103 +143,164 @@ class Frame extends JFrame {
                             isSelected,
                             cellHasFocus
                     );
-
+            
+            // 每列的檔案
             File file = (File) value;
+            // 標籤設定檔名
             label.setText(file.getName());
-
             return label;
         });
+       
+        // ========================畫面 結束==================================
 
+        // ========================事件 開始==================================
+        // 一般事件的寫法
+        // 要搭配以下import
+        // import java.awt.event.ActionEvent;
+        // import java.awt.event.ActionListener;
+        // uploadButton.addActionListener(new ActionListener() {
+        //     @Override
+        //     public void actionPerformed(ActionEvent e) {
+        //         uploadImage();
+        //     }
+        // });
+
+        // Lambda 寫法
+        // 監聽按鈕事件
+        uploadButton.addActionListener(e -> uploadImage());
+        refreshButton.addActionListener(e -> loadImages());
+
+        // 列表點選每一列的監聽事件
         imageList.addListSelectionListener(e -> {
-            if (e.getValueIsAdjusting()) {
-                return;
-            }
-
+            // System.out.println("已選擇檔案");
             File selectedFile = imageList.getSelectedValue();
-
-            if (selectedFile != null) {
+            if(selectedFile != null) {
                 showImage(selectedFile);
-            }
+            } 
         });
 
-
-        loadUploadImages();
+        // ========================事件 結束==================================
+        // 顯示所有的檔案
+        loadImages();
+        // 顯示視窗
         setVisible(true);
     }
-    
-    private void uploadImage() {
+
+    private void settingFrame() {
+        setTitle("圖片上傳與瀏覽 - swing - 單檔");
+        // 設定寬高
+        setSize(900, 700);
+        // 按按鈕時結束程式
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // 視窗設定在中央的位置
+        setLocationRelativeTo(null);
+    }
+
+    // 上傳檔案
+    public void uploadImage() {
+        // 1. 選擇檔案
         JFileChooser chooser = new JFileChooser();
 
+        // 設定過濾檔案, 選擇圖檔就好
+        // Extension: 副檔名
         chooser.setFileFilter(new FileNameExtensionFilter(
-                "圖片檔案 (*.jpg, *.jpeg, *.png, *.gif)",
-                "jpg",
-                "jpeg",
-                "png",
-                "gif"
+            "圖片檔案 (*.jpg, *.jpeg, *.png, *.gif)",
+            "jpg",
+            "jpeg",
+            "png",
+            "gif"
         ));
+        chooser.setMultiSelectionEnabled(true);
 
-        // showOpenDialog 會打開檔案選擇視窗。
-        // 回傳值用來判斷使用者是選了檔案，還是按取消。
+        // 顯示打開對話筐
+        // 會回傳以下動作的對應int
+        // JFileChooser.CANCEL_OPTION
+        // JFileChooser.APPROVE_OPTION --> 使用者選到圖片
+        // JFileChooser.ERROR_OPTION
         int result = chooser.showOpenDialog(this);
 
-        if (result == JFileChooser.APPROVE_OPTION) {
+        // 判斷結果有選到圖片我才繼續去做上傳的動作
+        if(result == JFileChooser.APPROVE_OPTION) {
+            // 2. 檔案上傳
+            // 來源檔案
             File sourceFile = chooser.getSelectedFile();
-            File targetFile = new File(uploadDir, sourceFile.getName());
-
-            setStatusText("上傳中...", null);
+            // 目標資料夾
+            File uploadDir = new File("src/senior/uploadImage/uploads");
+            
+            statusLabel.setText("上傳中....");
             progressBar.setValue(0);
             progressBar.setString("0%");
 
-            uploadButton.setEnabled(false);
-            refreshButton.setEnabled(false);
+            // 判斷資料夾是否存在
+            if (!uploadDir.exists()) {
+                // 創造資料夾
+                uploadDir.mkdirs();
+            }
 
+            // 目標檔案 = 目標資料夾 + 來源檔案的檔名
+            File targetFile = new File(uploadDir, sourceFile.getName());
+
+            // 1024 byte => 1 KB
+            // 1024 KB => 1 MB
+            // 1024 MB => 1 GB
+            // 1024 GB => 1 TB
+            // 每次讀取 4096 bytes，不要一次把整張圖片全部讀進記憶體。
+
+            // 要多一條執行緒另外去跑上傳的動作
             new Thread(() -> {
                 byte[] buffer = new byte[4096];
+
+                // 原始檔案的大小
                 long totalSize = sourceFile.length();
+                // 已複製的檔案大小(進度條計算使用)
                 long copiedSize = 0;
 
                 FileInputStream fis = null;
                 FileOutputStream fos = null;
 
                 try {
+                    // FileInputStream：從原始圖片讀取資料。
                     fis = new FileInputStream(sourceFile);
+
+                    // FileOutputStream：把資料寫到 uploads 裡的新檔案。
                     fos = new FileOutputStream(targetFile);
 
                     int len;
 
+                    // fis.read(buffer) 會把資料讀進 buffer。
+                    // 回傳值 len 表示這次實際讀到幾個 bytes。
+                    // 如果回傳 -1，代表檔案讀完了。
                     while ((len = fis.read(buffer)) != -1) {
-                        Thread.sleep(10);
+                        // 睡100毫秒, 為了觀察進度條
+                        Thread.sleep(100);
+                        // 只寫入本次實際讀到的長度 len。
                         fos.write(buffer, 0, len);
+
+                        // 呼叫進度條更新的方法
                         copiedSize += len;
-
-                        int value = (int) ((copiedSize * 100) / totalSize);
-
-                        // 加在這裡：背景 thread 要更新 progressBar，所以丟回 EDT
+                        int value = (int) ((copiedSize  * 100) / totalSize);
+                        // 更新swing的畫面
                         SwingUtilities.invokeLater(() -> {
                             progressBar.setValue(value);
                             progressBar.setString(value + "%");
                         });
+
+                    
                     }
 
-                    // 加在這裡：上傳完成後更新畫面，也要丟回 EDT
+                    System.out.println();
+                    System.out.println("上傳成功");
+                    // 更新swing的畫面
                     SwingUtilities.invokeLater(() -> {
-                        loadUploadImages();
+                        loadImages();
                         showImage(targetFile);
-                        imageList.setSelectedValue(targetFile, true);
-                        setStatusText("上傳成功", targetFile);
                     });
 
-                } catch (Exception ex) {
-                    // 加在這裡：錯誤視窗和狀態更新，也要丟回 EDT
-                    SwingUtilities.invokeLater(() -> {
-                        JOptionPane.showMessageDialog(
-                                Frame.this,
-                                "上傳失敗：" + ex.getMessage()
-                        );
-                        setStatusText("上傳失敗", null);
-                    });
+                } catch (Exception e) {
+                    System.out.println("圖片複製失敗：" + e.getMessage());
 
                 } finally {
+                    // finally 不管成功或失敗都會執行，適合拿來關閉檔案資源。
                     try {
                         if (fis != null) {
                             fis.close();
@@ -216,51 +313,51 @@ class Frame extends JFrame {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-                    uploadButton.setEnabled(true);
-                    refreshButton.setEnabled(true);
                 }
             }).start();
+            
         }
+
+        // if(result == JFileChooser.CANCEL_OPTION) {
+        //     System.out.println("取消選擇");
+        // }
     }
 
-    private void loadUploadImages() {
+    // 取得uploads的所有檔案
+    public void loadImages() {
+        // 每次都先清除一次再做取得
         imageListModel.clear();
-       // listFiles 會取得資料夾裡的所有檔案。
+
+        // 找uploads內的所有檔案
+        File uploadDir = new File("src/senior/uploadImage/uploads");
         File[] files = uploadDir.listFiles();
 
-        if (files == null) {
+        // 如果是空的話
+        if(files == null) {
             return;
         }
 
-        for (File file : files) {
-            if (isImageFile(file)) {
-                imageListModel.addElement(file);
-            }
+        for(File oneFile: files) {
+            imageListModel.addElement(oneFile);
         }
 
-        if (imageListModel.isEmpty()) {
-            imageLabel.setIcon(null);
-            imageLabel.setText("uploads 資料夾目前沒有圖片");
-            setStatusText("uploads 資料夾目前沒有圖片", null);
+        if(imageListModel.isEmpty()) {
+            statusLabel.setText("uploads 資料夾目前沒有圖片");
         }
 
     }
 
-    private void showImage(File file) {
-        /*
-         * 顯示圖片流程：
-         * 1. 更新上方狀態與檔案大小。
-         * 2. 用 ImageIcon 讀取圖片。
-         * 3. 取得右側預覽區大小。
-         * 4. 依照預覽區大小等比例縮放圖片。
-         * 5. 把縮放後的圖片放到 imageLabel。
-         */
+    // 顯示已選擇的圖片
+    public void showImage(File file) {
+        // 變更文字狀態
+        statusLabel.setText("顯示圖片");
+        fileSizeLabel.setText("大小: " + formatFileSize(file.length()));
 
-        setStatusText("目前顯示", file);
-
+        // 顯示圖片
         // ImageIcon 可以直接用檔案路徑讀取圖片。
+        // getAbsolutePath(): 取得絕對路徑
         ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+        // 得到圖片寬高
         int imageWidth = icon.getIconWidth();
         int imageHeight = icon.getIconHeight();
 
@@ -271,24 +368,111 @@ class Frame extends JFrame {
             return;
         }
 
-        // 依照右側可視區域等比例縮放圖片。
-        // imageLabel 放在 JScrollPane 裡，所以 parent 通常是 JViewport。
+        /*
+         * 取得右邊圖片顯示區目前可以使用的大小。
+         * 互動網站: https://edward071123.github.io/gealent_050701/src/senior/uploadImage/basic/resize-image.html
+         *
+         * Dimension 是 一個用來裝寬度和高度的物件
+         * 
+         * imageLabel 放在 imageScrollPane 裡面時，
+         * imageLabel.getParent() 通常會是 JViewport。
+         * 
+         * • 可以把它想成這幾層：
+         *JScrollPane / imageScrollPane
+         *└── JViewport
+         *       └── imageLabel
+         *          └── ImageIcon / 圖片
+         *
+         *  圖層概念：
+         *  最外層：imageScrollPane
+         *  +--------------------------------------+
+         *  | JScrollPane                          |
+         *  |                                      |
+         *  |  中間可視區：JViewport                 |
+         *  |  +--------------------------------+  |
+         *  |  | JViewport                      |  |
+         *  |  |                                |  |
+         *  |  |  真正放圖片的元件：imageLabel     |  |
+         *  |  |  +--------------------------+  |  |
+         *  |  |  | imageLabel               |  |  |
+         *  |  |  |                          |  |  |
+         *  |  |  | ImageIcon 圖片            |  |  |
+         *  |  |  +--------------------------+  |  |
+         *  |  |                                |  |
+         *  |  +--------------------------------+  |
+         *  |                                      |
+         *  |  如果圖片太大，JScrollPane 會出現捲軸    |
+         *  +--------------------------------------+
+         *
+         * JViewport 是 JScrollPane 裡「目前看得到的區域」。
+         * 所以如果 parent 是 JViewport，
+         * 就用 getExtentSize() 取得可視範圍。
+         *
+         * 如果 parent 不是 JViewport，
+         * 就退而求其次用 imageLabel 自己的大小。
+         * 
+         * 重點：
+         *   imageScrollPane 是外框，負責提供捲軸
+         *   JViewport 是真正看得到的視窗區域
+         *   imageLabel 是放圖片的元件
+         *   用生活比喻：
+         *   
+         *   imageScrollPane = 相框外殼，帶捲軸
+         *   JViewport       = 相框中間透明玻璃，看得到的範圍
+         *   imageLabel      = 放在相框裡的紙
+         *   ImageIcon       = 紙上的圖片
+         */
         Dimension viewSize = imageLabel.getParent() instanceof JViewport
-                ? ((JViewport) imageLabel.getParent()).getExtentSize()
-                : imageLabel.getSize();
+            ? ((JViewport) imageLabel.getParent()).getExtentSize()
+            : imageLabel.getSize();
 
-        // 預留一點邊距，不要讓圖片緊貼邊界。
+        /*
+         * 預留一點邊距，不要讓圖片緊貼邊界。
+         *
+         * viewSize.width  是右邊顯示區的寬度。
+         * viewSize.height 是右邊顯示區的高度。
+         *
+         * 減 20 代表留一點空間。
+         *
+         * Math.max(100, ...)
+         * 是為了避免剛開畫面時 viewSize 太小，
+         * 導致 maxWidth 或 maxHeight 變成 0 或負數。
+         *  Math.max = 取較大的值
+         *  這裡是保底用，避免寬高太小
+         */
         int maxWidth = Math.max(100, viewSize.width - 20);
         int maxHeight = Math.max(100, viewSize.height - 20);
 
-        // 分別算出寬度比例和高度比例，取比較小的那個。
-        // 這樣圖片不會超出預覽區，也不會變形。
+        /*
+         * 分別算出寬度比例和高度比例，取比較小的那個。
+         *
+         * 例如：
+         * maxWidth = 400, imageWidth = 800
+         * 寬度比例 = 400 / 800 = 0.5
+         *
+         * maxHeight = 300, imageHeight = 300
+         * 高度比例 = 300 / 300 = 1.0
+         *
+         * 如果用 1.0，圖片寬度會超出畫面。
+         * 所以用 Math.min(...) 取比較小的 0.5。
+         *
+         * 這樣圖片不會超出預覽區，也不會變形。
+         */
         double scale = Math.min(
                 (double) maxWidth / imageWidth,
                 (double) maxHeight / imageHeight
         );
 
-        // 算出縮放後實際顯示的寬高。
+        /*
+         * 算出縮放後實際顯示的寬高。
+         *
+         * imageWidth * scale  = 縮放後寬度
+         * imageHeight * scale = 縮放後高度
+         *
+         * Math.max(1, ...)
+         * 是為了避免計算結果變成 0。
+         * 圖片寬高至少要是 1 才能顯示。
+         */
         int displayWidth = Math.max(1, (int) (imageWidth * scale));
         int displayHeight = Math.max(1, (int) (imageHeight * scale));
 
@@ -299,65 +483,26 @@ class Frame extends JFrame {
                 Image.SCALE_SMOOTH
         );
 
-        // 清掉原本的文字，改顯示圖片。
         imageLabel.setText("");
         imageLabel.setIcon(new ImageIcon(image));
     }
 
-    // 統一設定上方資訊。上方不顯示檔名，檔名只放在左側清單。
-    private void setStatusText(String text, File file) {
-        // 狀態文字，例如：上傳中、上傳成功、目前顯示。
-        statusLabel.setText("狀態：" + text);
-
-        // 如果沒有檔案，就把大小顯示成 -。
-        if (file == null) {
-            fileSizeLabel.setText("大小：-");
-            statusLabel.setToolTipText(null);
-            return;
-        }
-
-        // 有檔案時，顯示檔案大小。
-        fileSizeLabel.setText("大小：" + formatFileSize(file.length()));
-
-        // tooltip 是滑鼠移到狀態文字上時顯示的小提示。
-        // 這裡用來保存完整路徑，但畫面上不直接顯示完整路徑。
-        statusLabel.setToolTipText(file.getAbsolutePath());
-    }
-
-    private String formatFileSize(long size) {
-        if (size < 1024) {
+    // 轉換byte變成我們常用的計算顯示
+    // 1024 byte => 1 KB
+    // 1024 KB => 1 MB
+    // 1024 MB => 1 GB
+    // 1024 GB => 1 TB
+    public String formatFileSize(long size) {
+        if(size < 1024) {
             return size + " B";
         }
 
         double kb = size / 1024.0;
-        if (kb < 1024) {
+        if(kb < 1024) {
             return String.format("%.1f KB", kb);
         }
 
         double mb = kb / 1024.0;
         return String.format("%.1f MB", mb);
     }
- 
-    private boolean isImageFile(File file) {
-        // 先把檔名轉成小寫，這樣 .JPG / .jpg 都能判斷成功。
-        String name = file.getName().toLowerCase();
-
-        // 第一步：確認它是真的「檔案」，不是資料夾。
-        boolean isFile = file.isFile();
-
-        // 第二步：分別判斷副檔名。
-        boolean isJpg = name.endsWith(".jpg");
-        boolean isJpeg = name.endsWith(".jpeg");
-        boolean isPng = name.endsWith(".png");
-        boolean isGif = name.endsWith(".gif");
-
-        // 第三步：只要符合其中一種圖片副檔名，就算是圖片格式。
-        boolean isImageType = isJpg || isJpeg || isPng || isGif;
-
-        // 第四步：必須同時滿足：
-        // 1. 它是檔案
-        // 2. 它是允許的圖片格式
-        return isFile && isImageType;
-    }
-
 }

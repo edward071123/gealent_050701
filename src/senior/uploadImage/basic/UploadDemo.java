@@ -6,23 +6,36 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class UploadDemo {
-    public static void main(String[] args) throws IOException{
-
+    public static void main(String[] args) throws IOException {
 
         // targetFile 是複製後的新位置。
         // 例如 sourceFile 是 /Users/xxx/a.png，
         // targetFile 就會是 src/senior/uploadImage/uploads/a.png。
 
-        File sourceFile = new File("/Users/edwardchung/Desktop/q1.png");
+        // 來源檔案
+        File sourceFile = new File("/Users/edward/Desktop/m2.png");
+        // 目標資料夾
         File uploadDir = new File("src/senior/uploadImage/uploads");
+
+        // 判斷資料夾是否存在
         if (!uploadDir.exists()) {
+            // 創造資料夾
             uploadDir.mkdirs();
         }
+
+        // 目標檔案 = 目標資料夾 + 來源檔案的檔名
         File targetFile = new File(uploadDir, sourceFile.getName());
 
+        // 1024 byte => 1 KB
+        // 1024 KB => 1 MB
+        // 1024 MB => 1 GB
+        // 1024 GB => 1 TB
         // 每次讀取 4096 bytes，不要一次把整張圖片全部讀進記憶體。
         byte[] buffer = new byte[4096];
+
+        // 原始檔案的大小
         long totalSize = sourceFile.length();
+        // 已複製的檔案大小(進度條計算使用)
         long copiedSize = 0;
 
         FileInputStream fis = null;
@@ -41,11 +54,14 @@ public class UploadDemo {
             // 回傳值 len 表示這次實際讀到幾個 bytes。
             // 如果回傳 -1，代表檔案讀完了。
             while ((len = fis.read(buffer)) != -1) {
+                // 睡100毫秒, 為了觀察進度條
                 Thread.sleep(100);
                 // 只寫入本次實際讀到的長度 len。
                 fos.write(buffer, 0, len);
 
                 copiedSize += len;
+
+                // 呼叫進度條更新的方法
                 printProgress(copiedSize, totalSize);
             }
 
@@ -71,7 +87,6 @@ public class UploadDemo {
             }
         }
 
-        
     }
 
     private static void printProgress(long copiedSize, long totalSize) {
@@ -88,7 +103,7 @@ public class UploadDemo {
         // copiedSize * 100 / totalSize
         //
         // 例如：
-        // totalSize  = 10000 bytes
+        // totalSize = 10000 bytes
         // copiedSize = 2500 bytes
         //
         // 2500 * 100 / 10000 = 25
@@ -109,7 +124,7 @@ public class UploadDemo {
         // progress * barLength / 100
         //
         // 例如：
-        // progress  = 25
+        // progress = 25
         // barLength = 20
         //
         // 25 * 20 / 100 = 5

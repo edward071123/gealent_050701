@@ -1,4 +1,4 @@
-package junior.loopInfo;
+package junior.loopTraning;
 
 import java.util.Random;
 import java.util.Scanner;
