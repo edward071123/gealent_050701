@@ -12,6 +12,13 @@ public class Frame extends JFrame {
     // 一次最多可以選幾張圖片。
     // 之後如果要改成 10 張，只要改這裡，不用到處找數字。
     private static final int MAX_UPLOAD_COUNT = 5;
+    private static final Color PROGRESS_AREA_BACKGROUND = new Color(245, 247, 250);
+    private static final Color PROGRESS_ROW_BACKGROUND = Color.WHITE;
+    private static final Color PROGRESS_BAR_COLOR = new Color(37, 117, 210);
+    private static final Color PROGRESS_TRACK_COLOR = new Color(226, 232, 240);
+    private static final Color PROGRESS_TEXT_COLOR = new Color(36, 48, 63);
+    private static final Color PROGRESS_DONE_COLOR = new Color(21, 128, 61);
+    private static final Color PROGRESS_ERROR_COLOR = new Color(190, 18, 60);
 
     // 上傳後圖片統一放在這個資料夾。
     // File 代表檔案或資料夾路徑，這裡指向 uploads 資料夾。
@@ -76,9 +83,9 @@ public class Frame extends JFrame {
          * | progressScrollPane                                                |
          * | uploadProgressPanel                                               |
          * | +---------------------------------------------------------------+ |
-         * | | 第 1/3 張 d1.jpg 40%                                          | |
-         * | | 第 2/3 張 d2.jpg 75%                                          | |
-         * | | 第 3/3 張 d3.jpg 10%                                          | |
+         * | |  1/3  d1.jpg 40%                                              | |
+         * | |  2/3  d2.jpg 75%                                              | |
+         * | |  3/3  d3.jpg 10%                                              | |
          * | +---------------------------------------------------------------+ |
          * +-------------------------------------------------------------------+
          *
@@ -103,6 +110,7 @@ public class Frame extends JFrame {
         // BoxLayout.Y_AXIS 代表元件會從上到下垂直排列。
         uploadProgressPanel.setLayout(new BoxLayout(uploadProgressPanel, BoxLayout.Y_AXIS));
         uploadProgressPanel.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
+        uploadProgressPanel.setBackground(PROGRESS_AREA_BACKGROUND);
 
         // 按鈕事件。
         // addActionListener：設定按鈕被點擊後要執行什麼方法。
@@ -201,6 +209,9 @@ public class Frame extends JFrame {
         // 下方進度條區塊可能有多條進度列，所以放進 JScrollPane。
         JScrollPane progressScrollPane = new JScrollPane(uploadProgressPanel);
         progressScrollPane.setPreferredSize(new Dimension(0, 150));
+        progressScrollPane.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(226, 232, 240)));
+        progressScrollPane.getViewport().setBackground(PROGRESS_AREA_BACKGROUND);
+        progressScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         // JFrame 預設就是 BorderLayout。
         // NORTH 放上方工具列，CENTER 放主要內容，SOUTH 放多進度條區塊。
@@ -302,7 +313,7 @@ public class Frame extends JFrame {
             uploadProgressPanel.repaint();
 
             final int totalCount = sourceFiles.length;
-            final JProgressBar[] progressBars = new JProgressBar[sourceFiles.length];
+            final UploadProgressRow[] progressRows = new UploadProgressRow[sourceFiles.length];
             final File[] lastUploadedFile = new File[1];
 
             // Frame 只負責建立畫面需要的進度條。
@@ -311,15 +322,15 @@ public class Frame extends JFrame {
                 final File sourceFile = sourceFiles[i];
                 final int currentNumber = i + 1;
 
-                // 每張圖片建立自己的進度條。
-                final JProgressBar fileProgressBar = createFileProgressBar(
+                // 每張圖片建立自己的進度列。
+                final UploadProgressRow progressRow = createUploadProgressRow(
                         sourceFile,
                         currentNumber,
                         totalCount
                 );
 
-                progressBars[i] = fileProgressBar;
-                uploadProgressPanel.add(fileProgressBar);
+                progressRows[i] = progressRow;
+                uploadProgressPanel.add(progressRow.panel);
                 uploadProgressPanel.revalidate();
                 uploadProgressPanel.repaint();
             }
@@ -346,8 +357,8 @@ public class Frame extends JFrame {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            JProgressBar fileProgressBar = progressBars[index - 1];
-                            setFileProgressText(fileProgressBar, index, total, progress);
+                            UploadProgressRow progressRow = progressRows[index - 1];
+                            setFileProgressText(progressRow, index, total, progress);
                         }
                     });
                 }
@@ -362,8 +373,8 @@ public class Frame extends JFrame {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            JProgressBar fileProgressBar = progressBars[index - 1];
-                            setFileProgressText(fileProgressBar, index, total, 100);
+                            UploadProgressRow progressRow = progressRows[index - 1];
+                            setFileProgressText(progressRow, index, total, 100);
 
                             lastUploadedFile[0] = targetFile;
                             addUploadedFileToList(targetFile);
@@ -384,8 +395,8 @@ public class Frame extends JFrame {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            JProgressBar fileProgressBar = progressBars[index - 1];
-                            fileProgressBar.setString("第 " + index + "/" + total + " 張失敗");
+                            UploadProgressRow progressRow = progressRows[index - 1];
+                            setFileProgressError(progressRow, index, total);
 
                             JOptionPane.showMessageDialog(
                                     Frame.this,
@@ -424,23 +435,52 @@ public class Frame extends JFrame {
         }
     }
 
-    // 建立單一檔案專用的進度條。
-    private JProgressBar createFileProgressBar(File sourceFile, int currentNumber, int totalCount) {
+    // 建立單一檔案專用的進度列。
+    private UploadProgressRow createUploadProgressRow(File sourceFile, int currentNumber, int totalCount) {
         JProgressBar fileProgressBar = new JProgressBar(0, 100);
 
-        // setStringPainted(true)：讓進度條中間可以顯示文字。
-        fileProgressBar.setStringPainted(true);
+        // 文字另外放在 JLabel，進度條只負責顯示百分比，避免文字壓在進度條上。
+        fileProgressBar.setStringPainted(false);
+        fileProgressBar.setBorderPainted(false);
+        fileProgressBar.setOpaque(false);
+        fileProgressBar.setForeground(PROGRESS_BAR_COLOR);
+        fileProgressBar.setBackground(PROGRESS_TRACK_COLOR);
+        fileProgressBar.putClientProperty("JProgressBar.arc", 999);
         fileProgressBar.setValue(0);
-        setFileProgressText(fileProgressBar, currentNumber, totalCount, 0);
-
-        // tooltip 顯示完整檔名，避免進度條文字太長。
-        fileProgressBar.setToolTipText(sourceFile.getName());
 
         // 每條進度條固定高度，畫面比較整齊。
-        fileProgressBar.setPreferredSize(new Dimension(0, 28));
-        fileProgressBar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 28));
+        fileProgressBar.setPreferredSize(new Dimension(0, 8));
+        fileProgressBar.setMaximumSize(new Dimension(Integer.MAX_VALUE, 8));
 
-        return fileProgressBar;
+        JLabel progressLabel = new JLabel();
+        progressLabel.setFont(progressLabel.getFont().deriveFont(Font.BOLD, 13f));
+        progressLabel.setForeground(PROGRESS_TEXT_COLOR);
+        progressLabel.setPreferredSize(new Dimension(120, 22));
+        progressLabel.setToolTipText(sourceFile.getName());
+
+        JPanel progressRow = new JPanel(new BorderLayout(10, 0));
+        progressRow.setBackground(PROGRESS_ROW_BACKGROUND);
+        progressRow.setBorder(BorderFactory.createEmptyBorder(2, 8, 2, 8));
+        progressRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, 24));
+        progressRow.setAlignmentX(Component.LEFT_ALIGNMENT);
+        progressRow.add(progressLabel, BorderLayout.WEST);
+        progressRow.add(fileProgressBar, BorderLayout.CENTER);
+
+        JPanel rowWrapper = new JPanel(new BorderLayout());
+        rowWrapper.setBackground(PROGRESS_AREA_BACKGROUND);
+        rowWrapper.setBorder(BorderFactory.createEmptyBorder(0, 0, 4, 0));
+        rowWrapper.setMaximumSize(new Dimension(Integer.MAX_VALUE, 28));
+        rowWrapper.setAlignmentX(Component.LEFT_ALIGNMENT);
+        rowWrapper.add(progressRow, BorderLayout.CENTER);
+
+        UploadProgressRow uploadProgressRow = new UploadProgressRow(
+                rowWrapper,
+                progressLabel,
+                fileProgressBar
+        );
+        setFileProgressText(uploadProgressRow, currentNumber, totalCount, 0);
+
+        return uploadProgressRow;
     }
 
     private void loadUploadImages() {
@@ -570,7 +610,7 @@ public class Frame extends JFrame {
 
     // 統一設定單一進度條文字，避免不同地方各自組字串造成顯示不一致。
     private void setFileProgressText(
-            JProgressBar fileProgressBar,
+            UploadProgressRow progressRow,
             int currentNumber,
             int totalCount,
             int progress
@@ -579,25 +619,16 @@ public class Frame extends JFrame {
          * fileProgressBar.setValue(progress)
          * 設定進度條填滿的比例，progress 通常是 0 到 100。
          */
-        fileProgressBar.setValue(progress);
+        progressRow.progressBar.setValue(progress);
+        progressRow.label.setText("第 " + currentNumber + "/" + totalCount + " 張 " + progress + "%");
+        progressRow.label.setForeground(progress >= 100 ? PROGRESS_DONE_COLOR : PROGRESS_TEXT_COLOR);
+    }
 
-        /*
-         * fileProgressBar.setString(...)
-         * 設定進度條中間顯示的文字。
-         *
-         * 原本寫成「第 1 張：30%」比較長，
-         * 在某些系統的 Swing 進度條上，快速重畫時可能顯示不完整。
-         *
-         * 這裡使用比較短的格式：
-         * 第 1/5 張 30%
-         *
-         * currentNumber：目前第幾張
-         * totalCount   ：這次總共選了幾張
-         * progress     ：目前這張的上傳百分比
-         */
-        fileProgressBar.setString(
-                "第 " + currentNumber + "/" + totalCount + " 張 " + progress + "%"
-        );
+    private void setFileProgressError(UploadProgressRow progressRow, int currentNumber, int totalCount) {
+        progressRow.progressBar.setValue(0);
+        progressRow.progressBar.setForeground(PROGRESS_ERROR_COLOR);
+        progressRow.label.setText("第 " + currentNumber + "/" + totalCount + " 張失敗");
+        progressRow.label.setForeground(PROGRESS_ERROR_COLOR);
     }
 
     // 統一設定上方資訊。上方不顯示檔名，檔名只放在左側清單。
@@ -637,6 +668,18 @@ public class Frame extends JFrame {
 
         double mb = kb / 1024.0;
         return String.format("%.1f MB", mb);
+    }
+
+    private static class UploadProgressRow {
+        private final JPanel panel;
+        private final JLabel label;
+        private final JProgressBar progressBar;
+
+        private UploadProgressRow(JPanel panel, JLabel label, JProgressBar progressBar) {
+            this.panel = panel;
+            this.label = label;
+            this.progressBar = progressBar;
+        }
     }
 
 }
