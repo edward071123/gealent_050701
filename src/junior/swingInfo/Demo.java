@@ -1,4 +1,4 @@
-package junior.swing;
+package junior.swingInfo;
 
 import javax.swing.*;
 
