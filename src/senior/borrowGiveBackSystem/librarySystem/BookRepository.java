@@ -5,6 +5,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+/* 
+ * 只負責讀寫檔案
+ */
 public class BookRepository {
     // 檔案路徑
     private String dataFilePath;

@@ -13,6 +13,7 @@
 
 > 如果你想自訂資料夾結構，請開啟 `.vscode/settings.json`，並在其中更新相關設定。
 
+
 ## 編譯指令
 ```sh
 javac -d bin \

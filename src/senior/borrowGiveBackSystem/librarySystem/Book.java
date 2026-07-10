@@ -1,5 +1,8 @@
 package senior.borrowGiveBackSystem.librarySystem;
 
+/* 
+ * 每本書的欄位狀態
+ */
 public class Book {
     private String number;
     private String title;

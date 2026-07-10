@@ -9,6 +9,7 @@ import senior.borrowGiveBackSystem.main.IBorrowGiveBack;
     models:         db的table     => Book.java
     repostories :   操作資料庫     => BookRepository.java
     services:       共同邏輯(共用的功能)       => LibraryService.java
+    只負責借書/還書規則
 */
 
 

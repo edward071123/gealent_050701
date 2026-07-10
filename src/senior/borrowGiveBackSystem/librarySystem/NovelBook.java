@@ -1,10 +1,10 @@
 package senior.borrowGiveBackSystem.librarySystem;
 
 public class NovelBook extends Book {
+
     private String category;
 
-    public NovelBook(String number, String title, String author, boolean available, String borrowUser,
-            String category) {
+    public NovelBook(String number, String title, String author, boolean available, String category, String borrowUser) {
         super(number, title, author, available, borrowUser);
         this.category = category;
     }
@@ -16,13 +16,13 @@ public class NovelBook extends Book {
 
     @Override
     public String getExtraInfo() {
-        return this.category;
+        return category;
     }
 
     @Override
     public String getInfo() {
         return super.getInfo() + "\n"
-                + "類型：小說\n"
-                + "分類：" + getExtraInfo();
+              + "類型：小說\n"
+              + "分類：" + getExtraInfo();
     }
 }

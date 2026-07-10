@@ -2,11 +2,11 @@ package junior.loopTraning;
 
 public class PyramidI {
     public static void main(String[] args) {
-        //*
-        //**
-        //***
-        //****
-        //*****
+        // *
+        // **
+        // ***
+        // ****
+        // *****
         // int level = 10;
         // for (int i = 1; i <= level; i++) {
         //     // 第i天 每天只能玩i次 (第i層 只能印出i次星星)
@@ -17,9 +17,9 @@ public class PyramidI {
         //     System.out.println("");
         // }
 
-        //*
-        //***
-        //*****
+        // *
+        // ***
+        // *****
         // Step1: 找出每一層(i)是否為偶數or奇數
         // int level = 10;
         // for (int i = 1; i <= level; i++) {

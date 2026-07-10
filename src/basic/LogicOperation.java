@@ -140,7 +140,5 @@ public class LogicOperation {
         System.out.println(canPass);
         // 請問最後輸出的結果為何？
 
-
-        
     }
 }
