@@ -1,5 +1,6 @@
 package senior.uploadImage.swingPlusIV;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.SwingUtilities;
@@ -9,6 +10,9 @@ import java.util.Enumeration;
 
 public class Demo {
     public static void main(String[] args) {
+        // 在建立任何 Swing 元件之前，先啟用 FlatLaf 外觀。
+        FlatLightLaf.setup();
+
         // 在建立 Frame 之前，先統一設定 Swing 的預設字型。
         setDefaultFont();
 

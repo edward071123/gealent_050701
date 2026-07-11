@@ -1,9 +1,21 @@
 package senior.uploadImage.swingPlusI;
 
+import com.formdev.flatlaf.FlatLightLaf;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 import javax.swing.SwingUtilities;
+import javax.swing.plaf.FontUIResource;
+import java.awt.Font;
+import java.util.Enumeration;
 
 public class Demo {
     public static void main(String[] args) {
+        // 在建立任何 Swing 元件之前，先啟用 FlatLaf 外觀。
+        FlatLightLaf.setup();
+
+        // 在建立 Frame 之前，先統一設定 Swing 的預設字型。
+        setDefaultFont();
+
         /*
          * SwingUtilities.invokeLater 的用途：
          *
@@ -20,5 +32,20 @@ public class Demo {
             // 建立主視窗。
             new Frame();
         });
+    }
+
+    private static void setDefaultFont() {
+        FontUIResource font = new FontUIResource("Dialog", Font.PLAIN, 16);
+        UIDefaults defaults = UIManager.getDefaults();
+        Enumeration<Object> keys = defaults.keys();
+
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = defaults.get(key);
+
+            if (value instanceof FontUIResource) {
+                defaults.put(key, font);
+            }
+        }
     }
 }

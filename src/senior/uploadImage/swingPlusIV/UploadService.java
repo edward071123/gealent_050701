@@ -68,16 +68,14 @@ public class UploadService {
         long totalSize = sourceFile.length();
         long copiedSize = 0;
 
-        FileInputStream fis = null;
-        FileOutputStream fos = null;
+        // try-with-resources 會在區塊結束時自動關閉 FileInputStream 和 FileOutputStream。
+        try (
+                // FileInputStream：從原始圖片讀取資料。
+                FileInputStream fis = new FileInputStream(sourceFile);
 
-        try {
-            // FileInputStream：從原始圖片讀取資料。
-            fis = new FileInputStream(sourceFile);
-
-            // FileOutputStream：把資料寫到 uploads 裡的新檔案。
-            fos = new FileOutputStream(targetFile);
-
+                // FileOutputStream：把資料寫到 uploads 裡的新檔案。
+                FileOutputStream fos = new FileOutputStream(targetFile)
+        ) {
             int len;
 
             // fis.read(buffer) 會把資料讀進 buffer。
@@ -99,16 +97,6 @@ public class UploadService {
 
         } catch (Exception e) {
             throw new Exception("圖片複製失敗：" + e.getMessage());
-
-        } finally {
-            // finally 不管成功或失敗都會執行，適合拿來關閉檔案資源。
-            if (fis != null) {
-                fis.close();
-            }
-
-            if (fos != null) {
-                fos.close();
-            }
         }
 
         // 回傳複製完成後的檔案，讓 Frame 可以顯示它。
