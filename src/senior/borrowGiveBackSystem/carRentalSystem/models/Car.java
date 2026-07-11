@@ -9,7 +9,7 @@ public class Car {
     private int categoryId; // 類別 ID
 
     public Car(int id, String plate, String brand, boolean available, String borrowUser, int categoryId) {
-        setId(categoryId);
+        setId(id);
         setPlate(plate);
         setBrand(brand);
         setAvailable(available);
