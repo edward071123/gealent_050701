@@ -7,6 +7,40 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.*;
 
+/*
+ * Frame 程式處理流程與 method 呼叫順序：
+ *
+ * 一、視窗啟動流程
+ * 1. Demo.main()
+ * 2. new Frame()
+ * 3. Frame() 建立上方工具列、圖片清單、圖片預覽區、下方進度區
+ * 4. Frame() 呼叫 loadUploadImages()，先載入 uploads 資料夾既有圖片
+ *
+ * 二、使用者按「上傳圖片」後
+ * 1. uploadImage()
+ * 2. chooseImageFiles()
+ *    - 開啟 JFileChooser
+ *    - 回傳使用者選到的 File[]
+ * 3. validateSelectedFiles(sourceFiles)
+ *    - 檢查一次最多 MAX_UPLOAD_COUNT 張
+ *    - 檢查副檔名必須是 jpg / jpeg / png / gif
+ * 4. startUpload(sourceFiles)
+ *    - 更新狀態文字
+ *    - 停用上傳與重新整理按鈕
+ *    - 呼叫 createProgressRows(sourceFiles) 建立每張圖片的進度列
+ *    - 呼叫 createUploadListener(...) 建立上傳事件監聽器
+ *    - 呼叫 uploadService.uploadMultiple(sourceFiles, listener)
+ *
+ * 三、多執行緒上傳與畫面更新
+ * 1. UploadService.uploadMultiple(...) 為每張圖片建立 Thread
+ * 2. 每個 Thread 呼叫 UploadService.upload(...)
+ * 3. UploadService 透過 IUploadTaskListener 回報：
+ *    - onProgress(...)：更新單張進度列
+ *    - onSuccess(...) ：加入左側圖片清單並顯示圖片
+ *    - onError(...)   ：標示失敗並顯示錯誤訊息
+ *    - onAllFinished(...)：恢復按鈕並顯示總耗時
+ * 4. listener 內部用 SwingUtilities.invokeLater(...) 回到 Swing 畫面執行緒更新 UI
+ */
 public class Frame extends JFrame {
 
     // 一次最多可以選幾張圖片。
@@ -225,21 +259,30 @@ public class Frame extends JFrame {
         setVisible(true);
     }
 
+    /*
+    * 多執行緒上傳流程：
+    * 1. 開啟 JFileChooser 讓使用者選圖片。
+    * 2. 允許使用者一次選多張圖片。
+    * 3. 檢查選擇數量，最多只能 5 張。
+    * 4. 逐張檢查副檔名是不是 jpg/jpeg/png/gif。
+    * 5. Frame 每一張圖片建立一條 JProgressBar。
+    * 6. Frame 建立 IUploadTaskListener，準備接收上傳事件。
+    * 7. Frame 呼叫 uploadService.uploadMultiple(...)。
+    * 8. UploadService 建立多個 Thread，同時上傳多張圖片。
+    * 9. UploadService 透過 listener 回報進度、成功、失敗、全部完成。
+    * 10. Frame 收到 listener 事件後更新畫面。
+    */
     private void uploadImage() {
-        /*
-         * 多執行緒上傳流程：
-         * 1. 開啟 JFileChooser 讓使用者選圖片。
-         * 2. 允許使用者一次選多張圖片。
-         * 3. 檢查選擇數量，最多只能 5 張。
-         * 4. 逐張檢查副檔名是不是 jpg/jpeg/png/gif。
-         * 5. Frame 每一張圖片建立一條 JProgressBar。
-         * 6. Frame 建立 IUploadTaskListener，準備接收上傳事件。
-         * 7. Frame 呼叫 uploadService.uploadMultiple(...)。
-         * 8. UploadService 建立多個 Thread，同時上傳多張圖片。
-         * 9. UploadService 透過 listener 回報進度、成功、失敗、全部完成。
-         * 10. Frame 收到 listener 事件後更新畫面。
-         */
+        File[] sourceFiles = chooseImageFiles();
 
+        if (sourceFiles == null || !validateSelectedFiles(sourceFiles)) {
+            return;
+        }
+
+        startUpload(sourceFiles);
+    }
+
+    private File[] chooseImageFiles() {
         // 讓使用者選擇圖片檔。
         JFileChooser chooser = new JFileChooser();
 
@@ -259,180 +302,178 @@ public class Frame extends JFrame {
         // 回傳值用來判斷使用者是選了檔案，還是按取消。
         int result = chooser.showOpenDialog(this);
 
-        if (result == JFileChooser.APPROVE_OPTION) {
+        if (result != JFileChooser.APPROVE_OPTION) {
+            return null;
+        }
 
-            // getSelectedFiles() 會取得使用者選擇的多個檔案。
-            // 回傳型別是 File[]，也就是 File 陣列。
-            File[] sourceFiles = chooser.getSelectedFiles();
+        // getSelectedFiles() 會取得使用者選擇的多個檔案。
+        File[] sourceFiles = chooser.getSelectedFiles();
+        return sourceFiles.length == 0 ? null : sourceFiles;
+    }
 
-            // 如果使用者沒有選到任何檔案，就不往下處理。
-            if (sourceFiles.length == 0) {
-                return;
-            }
+    private boolean validateSelectedFiles(File[] sourceFiles) {
+        // 本範例限制最多一次上傳 5 張，避免初學範例一次處理太多檔案。
+        if (sourceFiles.length > MAX_UPLOAD_COUNT) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "一次最多只能上傳 " + MAX_UPLOAD_COUNT + " 張圖片"
+            );
+            return false;
+        }
 
-            // 本範例限制最多一次上傳 5 張，避免初學範例一次處理太多檔案。
-            if (sourceFiles.length > MAX_UPLOAD_COUNT) {
+        // 先檢查所有檔案。只要其中一個不是圖片，就整批不開始上傳。
+        for (File sourceFile : sourceFiles) {
+            if (!uploadService.isImageFile(sourceFile)) {
                 JOptionPane.showMessageDialog(
                         this,
-                        "一次最多只能上傳 " + MAX_UPLOAD_COUNT + " 張圖片"
+                        "只能上傳 jpg、jpeg、png、gif 圖片"
                 );
-                return;
+                return false;
             }
-
-            // 先檢查所有檔案。
-            // 只要其中一個不是圖片，就整批不開始上傳。
-            for (File sourceFile : sourceFiles) {
-                if (!uploadService.isImageFile(sourceFile)) {
-                    JOptionPane.showMessageDialog(
-                            this,
-                            "只能上傳 jpg、jpeg、png、gif 圖片"
-                    );
-                    return;
-                }
-            }
-
-            // 先更新畫面狀態，讓使用者知道程式開始處理。
-            setStatusText("開始多執行緒上傳 " + sourceFiles.length + " 張圖片", null);
-            uploadButton.setEnabled(false);
-            refreshButton.setEnabled(false);
-
-            /*
-             * 記錄開始時間。
-             *
-             * System.currentTimeMillis() 會取得目前時間，
-             * 單位是毫秒。
-             *
-             * 等全部圖片上傳完成後，
-             * 再用「結束時間 - 開始時間」算出總共花幾秒。
-             */
-            final long startTime = System.currentTimeMillis();
-
-            // 清空上一批上傳留下來的進度條。
-            uploadProgressPanel.removeAll();
-            uploadProgressPanel.revalidate();
-            uploadProgressPanel.repaint();
-
-            final int totalCount = sourceFiles.length;
-            final UploadProgressRow[] progressRows = new UploadProgressRow[sourceFiles.length];
-            final File[] lastUploadedFile = new File[1];
-
-            // Frame 只負責建立畫面需要的進度條。
-            // Thread 的建立會交給 UploadService.uploadMultiple(...)。
-            for (int i = 0; i < sourceFiles.length; i++) {
-                final File sourceFile = sourceFiles[i];
-                final int currentNumber = i + 1;
-
-                // 每張圖片建立自己的進度列。
-                final UploadProgressRow progressRow = createUploadProgressRow(
-                        sourceFile,
-                        currentNumber,
-                        totalCount
-                );
-
-                progressRows[i] = progressRow;
-                uploadProgressPanel.add(progressRow.panel);
-                uploadProgressPanel.revalidate();
-                uploadProgressPanel.repaint();
-            }
-
-            /*
-             * IUploadTaskListener 是 Frame 和 UploadService 之間的橋樑。
-             *
-             * UploadService 負責上傳和 Thread，
-             * 但它不直接碰 JProgressBar、JList、JLabel。
-             *
-             * Frame 在這裡實作 listener，
-             * 收到事件後再更新畫面。
-             */
-            IUploadTaskListener listener = new IUploadTaskListener() {
-                @Override
-                public void onProgress(File file, final int index, final int total, final int progress) {
-                    /*
-                     * onProgress 是由 UploadService 裡的背景 Thread 呼叫。
-                     *
-                     * Swing 元件不能直接在背景 Thread 裡更新，
-                     * 所以要用 SwingUtilities.invokeLater，
-                     * 把畫面更新丟回 Swing 事件執行緒。
-                     */
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            UploadProgressRow progressRow = progressRows[index - 1];
-                            setFileProgressText(progressRow, index, total, progress);
-                        }
-                    });
-                }
-
-                @Override
-                public void onSuccess(
-                        File sourceFile,
-                        final File targetFile,
-                        final int index,
-                        final int total
-                ) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            UploadProgressRow progressRow = progressRows[index - 1];
-                            setFileProgressText(progressRow, index, total, 100);
-
-                            lastUploadedFile[0] = targetFile;
-                            addUploadedFileToList(targetFile);
-                            showImage(targetFile);
-                            imageList.setSelectedValue(targetFile, true);
-                            setStatusText("已完成第 " + index + " / " + total + " 張", targetFile);
-                        }
-                    });
-                }
-
-                @Override
-                public void onError(
-                        final File sourceFile,
-                        final Exception ex,
-                        final int index,
-                        final int total
-                ) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            UploadProgressRow progressRow = progressRows[index - 1];
-                            setFileProgressError(progressRow, index, total);
-
-                            JOptionPane.showMessageDialog(
-                                    Frame.this,
-                                    "上傳失敗：" + sourceFile.getName() + "\n" + ex.getMessage()
-                            );
-                        }
-                    });
-                }
-
-                @Override
-                public void onAllFinished(final int total) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            long endTime = System.currentTimeMillis();
-                            long elapsedTime = endTime - startTime;
-                            double elapsedSeconds = elapsedTime / 1000.0;
-
-                            uploadButton.setEnabled(true);
-                            refreshButton.setEnabled(true);
-
-                            setStatusText(
-                                    "全部上傳完成，共 " + total + " 張 ("
-                                            + String.format("%.1f", elapsedSeconds)
-                                            + " 秒)",
-                                    lastUploadedFile[0]
-                            );
-                        }
-                    });
-                }
-            };
-
-            // Frame 不直接 new Thread。
-            // 多執行緒上傳交給 UploadService 處理。
-            uploadService.uploadMultiple(sourceFiles, listener);
         }
+
+        return true;
+    }
+
+    private void startUpload(File[] sourceFiles) {
+        setStatusText("開始多執行緒上傳 " + sourceFiles.length + " 張圖片", null);
+        uploadButton.setEnabled(false);
+        refreshButton.setEnabled(false);
+        /*
+        * 記錄開始時間。
+        *
+        * System.currentTimeMillis() 會取得目前時間，
+        * 單位是毫秒。
+        *
+        * 等全部圖片上傳完成後，
+        * 再用「結束時間 - 開始時間」算出總共花幾秒。
+        */
+        final long startTime = System.currentTimeMillis();
+        final UploadProgressRow[] progressRows = createProgressRows(sourceFiles);
+        final File[] lastUploadedFile = new File[1];
+
+        IUploadTaskListener listener = createUploadListener(
+                progressRows,
+                lastUploadedFile,
+                startTime
+        );
+
+        // Frame 不直接 new Thread，多執行緒上傳交給 UploadService 處理。
+        uploadService.uploadMultiple(sourceFiles, listener);
+    }
+
+    private UploadProgressRow[] createProgressRows(File[] sourceFiles) {
+        // 清空上一批上傳留下來的進度條。
+        uploadProgressPanel.removeAll();
+
+        final int totalCount = sourceFiles.length;
+        final UploadProgressRow[] progressRows = new UploadProgressRow[sourceFiles.length];
+
+        for (int i = 0; i < sourceFiles.length; i++) {
+            final File sourceFile = sourceFiles[i];
+            final int currentNumber = i + 1;
+
+            UploadProgressRow progressRow = createUploadProgressRow(
+                    sourceFile,
+                    currentNumber,
+                    totalCount
+            );
+
+            progressRows[i] = progressRow;
+            uploadProgressPanel.add(progressRow.panel);
+        }
+
+        uploadProgressPanel.revalidate();
+        uploadProgressPanel.repaint();
+        return progressRows;
+    }
+
+    private IUploadTaskListener createUploadListener(
+            final UploadProgressRow[] progressRows,
+            final File[] lastUploadedFile,
+            final long startTime
+    ) {
+        /*
+         * IUploadTaskListener 是 Frame 和 UploadService 之間的橋樑。
+         * UploadService 負責上傳和 Thread；Frame 收到事件後再更新 Swing 畫面。
+         */
+        return new IUploadTaskListener() {
+            @Override
+            public void onProgress(File file, final int index, final int total, final int progress) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        UploadProgressRow progressRow = progressRows[index - 1];
+                        setFileProgressText(progressRow, index, total, progress);
+                    }
+                });
+            }
+
+            @Override
+            public void onSuccess(
+                    File sourceFile,
+                    final File targetFile,
+                    final int index,
+                    final int total
+            ) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        UploadProgressRow progressRow = progressRows[index - 1];
+                        setFileProgressText(progressRow, index, total, 100);
+
+                        lastUploadedFile[0] = targetFile;
+                        addUploadedFileToList(targetFile);
+                        showImage(targetFile);
+                        imageList.setSelectedValue(targetFile, true);
+                        setStatusText("已完成第 " + index + " / " + total + " 張", targetFile);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(
+                    final File sourceFile,
+                    final Exception ex,
+                    final int index,
+                    final int total
+            ) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        UploadProgressRow progressRow = progressRows[index - 1];
+                        setFileProgressError(progressRow, index, total);
+
+                        JOptionPane.showMessageDialog(
+                                Frame.this,
+                                "上傳失敗：" + sourceFile.getName() + "\n" + ex.getMessage()
+                        );
+                    }
+                });
+            }
+
+            @Override
+            public void onAllFinished(final int total) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        long endTime = System.currentTimeMillis();
+                        long elapsedTime = endTime - startTime;
+                        double elapsedSeconds = elapsedTime / 1000.0;
+
+                        uploadButton.setEnabled(true);
+                        refreshButton.setEnabled(true);
+
+                        setStatusText(
+                                "全部上傳完成，共 " + total + " 張 ("
+                                        + String.format("%.1f", elapsedSeconds)
+                                        + " 秒)",
+                                lastUploadedFile[0]
+                        );
+                    }
+                });
+            }
+        };
     }
 
     // 建立單一檔案專用的進度列。

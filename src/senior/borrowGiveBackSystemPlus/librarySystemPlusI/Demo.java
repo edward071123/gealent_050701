@@ -3,7 +3,9 @@ package senior.borrowGiveBackSystemPlus.librarySystemPlusI;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
+import java.util.Enumeration;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -15,7 +17,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.plaf.FontUIResource;
+
+import com.formdev.flatlaf.FlatLightLaf;
 
 public class Demo {
     /*
@@ -71,8 +78,56 @@ public class Demo {
     * statusPanel       ：顯示書籍統計資訊
     */
 
+    private static final String UI_FONT_NAME = chooseUiFontName();
+
     public static void main(String[] args) {
+        // 在建立任何 Swing 元件之前，先啟用 FlatLaf 外觀。
+        FlatLightLaf.setup();
+
+        // 統一預設字型，避免 macOS 上中文字旁邊的數字顯示不出來。
+        setDefaultFont();
+
         SwingUtilities.invokeLater(() -> createFrame());
+    }
+
+    private static void setDefaultFont() {
+        FontUIResource font = new FontUIResource(UI_FONT_NAME, Font.PLAIN, 16);
+        UIDefaults defaults = UIManager.getDefaults();
+        Enumeration<Object> keys = defaults.keys();
+
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = defaults.get(key);
+
+            if (value instanceof Font) {
+                defaults.put(key, font);
+            }
+        }
+    }
+
+    private static String chooseUiFontName() {
+        String[] candidates = {
+                "PingFang TC",
+                "PingFang SC",
+                "Heiti TC",
+                "Microsoft JhengHei",
+                "Noto Sans CJK TC",
+                "Dialog"
+        };
+
+        String[] availableFonts = GraphicsEnvironment
+                .getLocalGraphicsEnvironment()
+                .getAvailableFontFamilyNames();
+
+        for (String candidate : candidates) {
+            for (String fontName : availableFonts) {
+                if (fontName.equals(candidate)) {
+                    return candidate;
+                }
+            }
+        }
+
+        return "Dialog";
     }
 
     private static void createFrame() {
@@ -94,7 +149,7 @@ public class Demo {
         headerPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 0, 12));
 
         JLabel titleLabel = new JLabel("圖書館借還書系統");
-        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
+        titleLabel.setFont(new Font(UI_FONT_NAME, Font.BOLD, 24));
         headerPanel.add(titleLabel, BorderLayout.NORTH);
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));

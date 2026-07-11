@@ -375,17 +375,24 @@ public class LibrarySystemFrame extends JFrame {
     // |   +-------------------------------------------------------+  |
     // +--------------------------------------------------------------+
     private JPanel createBorrowTab() {
-        JPanel tab = new JPanel(new BorderLayout(0, 10));
+        JPanel tab = createTabContentPanel();
         tab.add(createSearchPanel(), BorderLayout.NORTH);
         tab.add(createBookTable(), BorderLayout.CENTER);
         tab.add(createBorrowOperatePanel(), BorderLayout.SOUTH);
         return tab;
     }
 
+    private JPanel createTabContentPanel() {
+        JPanel tab = new JPanel(new BorderLayout(0, 10));
+        tab.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        return tab;
+    }
+
     // 建立搜尋列。
     // 目前搜尋與重新整理先用 JOptionPane 顯示監聽事件已觸發，尚未真正過濾資料。
     private JPanel createSearchPanel() {
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 4));
+        searchPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 6, 0));
         JTextField keywordField = new JTextField(18);
         JComboBox<String> categoryComboBox = new JComboBox<String>(buildCategoryOptions());
         JButton searchButton = new JButton("搜尋");
@@ -467,7 +474,7 @@ public class LibrarySystemFrame extends JFrame {
     // |       +------------------------------------------------------|--------> 新增會員
     // +--------------------------------------------------------------+
     private JPanel createMemberManageTab() {
-        JPanel tab = new JPanel(new BorderLayout(0, 10));
+        JPanel tab = createTabContentPanel();
         String[] columns = { "會員ID", "帳號", "顯示姓名", "是否管理員" };
         DefaultTableModel memberTableModel = createReadonlyTableModel(buildMemberTableData(), columns);
         JTable memberTable = new JTable(memberTableModel);
@@ -520,14 +527,18 @@ public class LibrarySystemFrame extends JFrame {
     // |     +------------------------------------------|--------> createCategoryManagePanel()：分類管理
     // +------------------------------------------------+
     private JPanel createBookTypeManageTab() {
-        JPanel tab = new JPanel(new BorderLayout(0, 10));
+        JPanel tab = createTabContentPanel();
         JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 10, 0));
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, createBookManagePanel(), bottomPanel);
+        JPanel bottomWrapper = new JPanel(new BorderLayout());
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, createBookManagePanel(), bottomWrapper);
 
         bottomPanel.add(createCategoryManagePanel());
         bottomPanel.add(createItemManagePanel());
+        bottomWrapper.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        bottomWrapper.add(bottomPanel, BorderLayout.CENTER);
 
         splitPane.setResizeWeight(0.55);
+        splitPane.setDividerSize(10);
         splitPane.setOneTouchExpandable(true);
         tab.add(splitPane, BorderLayout.CENTER);
         return tab;
