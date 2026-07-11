@@ -9,13 +9,13 @@ DROP TABLE IF EXISTS categories;
 
 CREATE TABLE IF NOT EXISTS categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS cars (
     id INT PRIMARY KEY,
-    plate VARCHAR(255) NOT NULL, --車牌號碼
-    brand VARCHAR(100) NOT NULL, --品牌
+    plate VARCHAR(255) NOT NULL, -- 車牌號碼
+    brand VARCHAR(100) NOT NULL, -- 品牌
     available BOOLEAN NOT NULL DEFAULT TRUE,
     borrow_user VARCHAR(100) NULL,
     category_id INT NOT NULL,
